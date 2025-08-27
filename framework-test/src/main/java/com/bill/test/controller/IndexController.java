@@ -1,0 +1,95 @@
+package com.bill.test.controller;
+
+import bill.framework.redis.RedisLock;
+import bill.framework.redis.RedisUtil;
+import bill.framework.web.annotation.ApiVersion;
+import bill.framework.web.annotation.NoToken;
+import bill.framework.web.reply.RequestPageBO;
+import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.bill.test.entity.SysConfig;
+import com.bill.test.service.SysConfigService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@Tag(name = "测试")
+public class IndexController {
+
+    public final RedisUtil redisUtil;
+
+    public final RedisLock redisLock;
+
+    public final SysConfigService sysConfigService;
+
+    @Operation(summary = "登录")
+    @PostMapping("/login")
+    @NoToken
+    public String index(@RequestBody UserInfo userInfo) {
+        StpUtil.login(userInfo.getId());
+        StpUtil.getSession().set("info", userInfo);
+        return StpUtil.getTokenValue();
+    }
+
+    @Operation(summary = "信息")
+    @GetMapping("/info/{id}")
+    public UserInfo info(@PathVariable String id) {
+        UserInfo userInfo= (UserInfo) StpUtil.getSession().get("info");
+        log.info("userInfo:{}", userInfo);
+        return userInfo;
+    }
+
+    @Operation(summary = "退出")
+    @GetMapping("/loginOut")
+    public void loginOut() {
+        StpUtil.logout();
+    }
+
+
+    @Operation(summary = "分页")
+    @GetMapping("/list")
+    @NoToken
+    @Cacheable(value = "list:#60") //缓存
+    public IPage<SysConfig> list(@ParameterObject RequestPageBO bo) {
+        LambdaQueryWrapper queryWrapper= Wrappers.<SysConfig>lambdaQuery()
+                .eq(bo.getId()!=null,SysConfig::getId,bo.getId());
+         return  sysConfigService.page(bo.getPage(),queryWrapper);
+    }
+
+    @Operation(summary = "v1")
+    @GetMapping("/v1")
+    public String v1() {
+        redisLock.tryLock("11");
+        //redisLock.releaseLock("11");
+        return "v1";
+    }
+
+    @Operation(summary = "v1")
+    @GetMapping("/v1")
+    @ApiVersion(2)
+    public String v2() {
+        redisLock.releaseLock("11");
+        return "v2";
+    }
+
+
+    @Operation(summary = "测试")
+    @GetMapping("/test")
+    @Cacheable(value = "test:#60",key ="#sysConfig.id" ) //缓存
+    @NoToken
+    public SysConfig test(@ParameterObject SysConfig sysConfig) {
+        return sysConfigService.getOne(Wrappers.<SysConfig>lambdaQuery().le(SysConfig::getId,2).last("order by create_time desc limit 1"));
+
+    }
+
+
+}

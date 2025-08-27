@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    # PostgreSQL 数据源配置
+    url: jdbc:postgresql://117.72.94.34:5432/cc  # 数据库连接地址
+    driver-class-name: org.postgresql.Driver      # JDBC 驱动
+    username: root                                # 数据库用户名
+    password: 4396                                # 数据库密码
+  data:
+    redis:
+      # Redis 基本连接配置
+      host: 117.72.94.34          # Redis 服务 IP
+      port: 6379                  # Redis 端口
+      password: 4396              # Redis 密码
+      database: 0                 # 使用的 Redis 数据库索引
+      timeout: 3000ms             # 连接超时时间（毫秒）
+    redisson:
+      # Redisson 客户端单机模式配置
+      single-server-config:
+        address: redis://${spring.data.redis.host}:${spring.data.redis.port}  # Redis 地址，复用上面的 host 和 port
+        password: ${spring.data.redis.password}                               # Redis 密码，复用上面的配置
+        database: 1                              # 使用的数据库索引，复用上面的配置
+        connection-pool-size: 64         # 连接池最大连接数
+        connection-min-idle-size: 10     # 最小空闲连接数
+        timeout: 3000                    # Redisson 连接超时时间（毫秒）
+
+

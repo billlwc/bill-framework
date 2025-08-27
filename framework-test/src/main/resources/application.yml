@@ -1,0 +1,32 @@
+# ===============================
+# Spring Boot 通用配置
+# ===============================
+server:
+  port: 8080
+spring:
+  config:
+    import: "classpath:application-web.yml"
+  application:
+    name: framework-test
+  # 指定默认激活环境
+  profiles:
+    active: dev  # 可改为 dev/test/prod
+
+mybatis-plus:
+  #mapper-locations: classpath:/mapper/**/*.xml
+  #type-aliases-package: com.bill.test.entity
+  configuration:
+    # 打印 SQL 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# ===============================
+# 日志配置
+# ===============================
+logging:
+  level:
+    root: INFO
+    com.example.demo: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+debug: false
