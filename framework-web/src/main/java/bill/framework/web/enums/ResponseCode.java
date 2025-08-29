@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum ResponseStatusEnum {
+public enum ResponseCode {
     SUCCESS("SUCCESS", "success",200),//请求成功
     UNAUTHORIZED("UNAUTHORIZED", "unauthorized",401),//token无效
     BAD_REQUEST("ERROR_SYSTEM","bad_request",403),//非法请求

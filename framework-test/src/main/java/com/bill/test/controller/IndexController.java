@@ -84,11 +84,15 @@ public class IndexController {
 
     @Operation(summary = "测试")
     @GetMapping("/test")
-    @Cacheable(value = "test:#60",key ="#sysConfig.id" ) //缓存
+    //@Cacheable(value = "test:#60",key ="#sysConfig.id" ) //缓存
     @NoToken
-    public SysConfig test(@ParameterObject SysConfig sysConfig) {
-        return sysConfigService.getOne(Wrappers.<SysConfig>lambdaQuery().le(SysConfig::getId,2).last("order by create_time desc limit 1"));
+    public String test(@ParameterObject SysConfig sysConfig) {
+       // return sysConfigService.getOne(Wrappers.<SysConfig>lambdaQuery().le(SysConfig::getId,2).last("order by create_time desc limit 1"));
+        String configValue= """
+                {"min":0,"max":200000}
+                """;
 
+        return  configValue;
     }
 
 

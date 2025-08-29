@@ -1,7 +1,7 @@
 package bill.framework.web.reply;
 
 
-import bill.framework.web.enums.ResponseStatusEnum;
+import bill.framework.web.enums.ResponseCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,8 +22,8 @@ public class Result implements Serializable {
     private String uuid;
 
     public Result(Object data){
-        this.code = ResponseStatusEnum.SUCCESS.getCode();
-        this.message = ResponseStatusEnum.SUCCESS.getMessage();
+        this.code = ResponseCode.SUCCESS.getCode();
+        this.message = ResponseCode.SUCCESS.getMessage();
         this.data = data;
     }
 

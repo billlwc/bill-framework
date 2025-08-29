@@ -1,6 +1,6 @@
 package bill.framework.web.exception;
 
-import bill.framework.web.enums.ResponseStatusEnum;
+import bill.framework.web.enums.ResponseCode;
 import bill.framework.web.reply.Result;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.json.JSONUtil;
@@ -52,7 +52,7 @@ public class BaseExceptionHandler {
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
         log.error("参数错误 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseStatusEnum.BAD_REQUEST.getCode(), e.getMessage(), uuid);
+        return new Result(ResponseCode.BAD_REQUEST.getCode(), e.getMessage(), uuid);
     }
 
     /**
@@ -66,7 +66,7 @@ public class BaseExceptionHandler {
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
         log.error("请求404 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseStatusEnum.NOT_FOUND.getCode(), path+"  404", uuid);
+        return new Result(ResponseCode.NOT_FOUND.getCode(), path+"  404", uuid);
     }
 
 
@@ -76,7 +76,7 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(NotLoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result handleThrowable(NotLoginException e) {
-        return new Result(ResponseStatusEnum.UNAUTHORIZED.getCode(), e.getMessage());
+        return new Result(ResponseCode.UNAUTHORIZED.getCode(), e.getMessage());
     }
 
 
@@ -90,7 +90,7 @@ public class BaseExceptionHandler {
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
         log.error("系统异常 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseStatusEnum.ERROR_SYSTEM.getCode(), "系统错误", uuid);
+        return new Result(ResponseCode.ERROR_SYSTEM.getCode(), "系统错误", uuid);
     }
 
 

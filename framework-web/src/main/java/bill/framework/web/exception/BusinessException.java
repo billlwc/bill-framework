@@ -1,6 +1,6 @@
 package bill.framework.web.exception;
 
-import bill.framework.web.enums.ResponseStatusEnum;
+import bill.framework.web.enums.ResponseCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -20,26 +20,26 @@ public class BusinessException extends RuntimeException {
     }
 
     public BusinessException(String code, String message){
-        this(code,message, ResponseStatusEnum.ERROR_SYSTEM.getHttpStatus());
+        this(code,message, ResponseCode.ERROR_SYSTEM.getHttpStatus());
     }
     public BusinessException(String code, String message, Throwable cause){
-        this(code,message, ResponseStatusEnum.ERROR_SYSTEM.getHttpStatus());
+        this(code,message, ResponseCode.ERROR_SYSTEM.getHttpStatus());
         log.error(message,cause);
     }
 
     public BusinessException(String message){
-        this(ResponseStatusEnum.ERROR_SYSTEM.getCode(),message, ResponseStatusEnum.ERROR_SYSTEM.getHttpStatus());
+        this(ResponseCode.ERROR_SYSTEM.getCode(),message, ResponseCode.ERROR_SYSTEM.getHttpStatus());
     }
 
-    public BusinessException(ResponseStatusEnum message){
+    public BusinessException(ResponseCode message){
         this(message.getCode(),message.getMessage(),message.getHttpStatus());
     }
 
-    public BusinessException(ResponseStatusEnum statusEnum, String message){
+    public BusinessException(ResponseCode statusEnum, String message){
         this(statusEnum.getCode(),message,statusEnum.getHttpStatus());
     }
 
-    public BusinessException(ResponseStatusEnum message, Throwable cause){
+    public BusinessException(ResponseCode message, Throwable cause){
         this(message.getCode(),message.getMessage(),message.getHttpStatus());
         log.error(message.getMessage(),cause);
     }
