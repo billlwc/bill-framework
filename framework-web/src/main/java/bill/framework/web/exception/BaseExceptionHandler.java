@@ -61,12 +61,11 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler({ClassCastException.class,NoResourceFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result handleClassCastException(Throwable e, HttpServletRequest request) {
-
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
         log.error("请求404 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseCode.NOT_FOUND.getCode(), path+"  404", uuid);
+        return new Result(ResponseCode.NOT_FOUND.getCode(), path+" 404", uuid);
     }
 
 
