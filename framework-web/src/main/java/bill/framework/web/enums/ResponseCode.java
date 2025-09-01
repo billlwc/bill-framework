@@ -23,7 +23,7 @@ public enum ResponseCode {
 
 
     private String code;
-    private String message;
+    private String msg;
     private int httpStatus;
 
 }

@@ -4,8 +4,10 @@ import bill.framework.redis.RedisLock;
 import bill.framework.redis.RedisUtil;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
+import bill.framework.web.exception.ExceptionUtil;
 import bill.framework.web.reply.RequestPageBO;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @RestController
@@ -91,6 +94,8 @@ public class IndexController {
         String configValue= """
                 {"min":0,"max":200000}
                 """;
+
+        ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
 
         return  configValue;
     }

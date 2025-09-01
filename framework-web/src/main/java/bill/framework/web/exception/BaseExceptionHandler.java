@@ -38,7 +38,7 @@ public class BaseExceptionHandler {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
-        log.error("业务异常 uuid={}, path={}, params={}", uuid, path, params, e);
+       //log.error("业务异常 uuid={}, path={}, params={}", uuid, path, params, e);
         return new Result(e.getCode(), e.getMessage());
     }
 

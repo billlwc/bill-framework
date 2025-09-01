@@ -17,24 +17,24 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result implements Serializable {
     private String code;
-    private String message;
+    private String msg;
     private Object data;
     private String uuid;
 
     public Result(Object data){
         this.code = ResponseCode.SUCCESS.getCode();
-        this.message = ResponseCode.SUCCESS.getMessage();
+        this.msg = ResponseCode.SUCCESS.getMsg();
         this.data = data;
     }
 
-    public Result(String code,String message){
+    public Result(String code,String msg){
         this.code = code;
-        this.message = message;
+        this.msg = msg;
     }
 
-    public Result(String code,String message,String uuid){
+    public Result(String code,String msg,String uuid){
         this.code = code;
-        this.message = message;
+        this.msg = msg;
         this.uuid = uuid;
     }
 
