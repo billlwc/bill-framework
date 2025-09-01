@@ -2,11 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bill.test.mapper.SysConfigMapper">
     <!-- 根据 Wrapper 查询单条 SysConfig -->
-    <select id="getSysConfigByXml" resultType="com.bill.test.entity.SysConfig" parameterType="com.baomidou.mybatisplus.core.conditions.query.QueryWrapper">
-        SELECT
-            *
-        FROM sys_config
-            ${ew.customSqlSegment}
+    <select id="getSysConfigByXml" resultType="com.bill.test.entity.SysConfig"
+            parameterType="com.baomidou.mybatisplus.core.conditions.query.QueryWrapper">
+        SELECT * FROM sys_config ${ew.customSqlSegment}
     </select>
 
 </mapper>

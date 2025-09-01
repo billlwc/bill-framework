@@ -32,7 +32,7 @@ public class BusinessException extends RuntimeException {
     }
 
     public BusinessException(ResponseCode message){
-        this(message.getCode(),message.getMessage(),message.getHttpStatus());
+        this(message.getCode(),message.getMsg(),message.getHttpStatus());
     }
 
     public BusinessException(ResponseCode statusEnum, String message){
@@ -40,8 +40,8 @@ public class BusinessException extends RuntimeException {
     }
 
     public BusinessException(ResponseCode message, Throwable cause){
-        this(message.getCode(),message.getMessage(),message.getHttpStatus());
-        log.error(message.getMessage(),cause);
+        this(message.getCode(),message.getMsg(),message.getHttpStatus());
+        log.error(message.getMsg(),cause);
     }
 
 }

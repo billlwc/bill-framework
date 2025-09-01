@@ -8,6 +8,7 @@ import cn.hutool.core.util.RandomUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings("NullableProblems")
 @Slf4j
 @Configuration
 @ComponentScan("bill.framework.web")
@@ -37,9 +39,14 @@ public class WebConfig  implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry)  {
         registry.addInterceptor(new HandlerInterceptor() {
-                    @SuppressWarnings("NullableProblems")
+
                     @Override
                     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+                        String traceId = request.getHeader("X-Trace-Id");
+                        if (traceId == null || traceId.isEmpty()) {
+                            traceId = IdUtil.fastSimpleUUID();
+                        }
+                        MDC.put("traceId", traceId);
                         HandlerMethod handlerMethod=(HandlerMethod)handler;
                         Method method=handlerMethod.getMethod();
                         if (method.isAnnotationPresent(NoToken.class)) {
@@ -47,6 +54,13 @@ public class WebConfig  implements WebMvcConfigurer {
                         }
                         StpUtil.checkLogin();
                         return true;
+                    }
+
+                    @Override
+                    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+                        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
+                        // 请求完成后清理，避免线程复用导致污染
+                        MDC.clear();
                     }
                 })
                 .addPathPatterns("/**")

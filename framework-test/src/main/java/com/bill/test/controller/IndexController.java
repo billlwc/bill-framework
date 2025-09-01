@@ -94,7 +94,7 @@ public class IndexController {
         String configValue= """
                 {"min":0,"max":200000}
                 """;
-
+        log.info("configValue:{}", configValue);
         ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
 
         return  configValue;

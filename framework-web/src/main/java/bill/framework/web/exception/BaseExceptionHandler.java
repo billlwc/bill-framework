@@ -7,13 +7,12 @@ import cn.hutool.json.JSONUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-
-import java.util.UUID;
 
 /**
  * 全局异常处理器
@@ -35,10 +34,10 @@ public class BaseExceptionHandler {
             default -> HttpStatus.BAD_REQUEST.value();
         };
         response.setStatus(status);
-        String uuid = UUID.randomUUID().toString().replace("-", "");
+        String uuid = MDC.get("traceId");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
-       //log.error("业务异常 uuid={}, path={}, params={}", uuid, path, params, e);
+        log.error("业务异常 uuid={}, path={}, params={}", uuid, path, params, e);
         return new Result(e.getCode(), e.getMessage());
     }
 
@@ -48,7 +47,7 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        String uuid = UUID.randomUUID().toString().replace("-", "");
+        String uuid = MDC.get("traceId");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
         log.error("参数错误 uuid={}, path={}, params={}", uuid, path, params, e);
@@ -61,11 +60,7 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler({ClassCastException.class,NoResourceFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result handleClassCastException(Throwable e, HttpServletRequest request) {
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        String path = request.getRequestURI();
-        String params = JSONUtil.toJsonStr(request.getParameterMap());
-        log.error("请求404 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseCode.NOT_FOUND.getCode(), path+" 404", uuid);
+        return new Result(ResponseCode.NOT_FOUND.getCode(), request.getRequestURI()+" 404");
     }
 
 
@@ -85,7 +80,7 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result handleThrowable(Throwable e, HttpServletRequest request) {
-        String uuid = UUID.randomUUID().toString().replace("-", "");
+        String uuid =  MDC.get("traceId");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
         log.error("系统异常 uuid={}, path={}, params={}", uuid, path, params, e);
