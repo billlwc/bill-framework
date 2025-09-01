@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ public class Result implements Serializable {
     private String code;
     private String msg;
     private Object data;
-    private String uuid;
+    private String uuid= MDC.get("traceId");
 
     public Result(Object data){
         this.code = ResponseCode.SUCCESS.getCode();
@@ -30,12 +31,6 @@ public class Result implements Serializable {
     public Result(String code,String msg){
         this.code = code;
         this.msg = msg;
-    }
-
-    public Result(String code,String msg,String uuid){
-        this.code = code;
-        this.msg = msg;
-        this.uuid = uuid;
     }
 
 

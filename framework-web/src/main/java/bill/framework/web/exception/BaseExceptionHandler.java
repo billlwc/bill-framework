@@ -34,10 +34,9 @@ public class BaseExceptionHandler {
             default -> HttpStatus.BAD_REQUEST.value();
         };
         response.setStatus(status);
-        String uuid = MDC.get("traceId");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
-        log.error("业务异常 uuid={}, path={}, params={}", uuid, path, params, e);
+        log.error("{}  path={}, params={}",e.getMessage(), path, params);
         return new Result(e.getCode(), e.getMessage());
     }
 
@@ -47,11 +46,10 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        String uuid = MDC.get("traceId");
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
-        log.error("参数错误 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseCode.BAD_REQUEST.getCode(), e.getMessage(), uuid);
+        log.error("参数错误  path={}, params={}", path, params);
+        return new Result(ResponseCode.BAD_REQUEST.getCode(), e.getMessage());
     }
 
     /**
@@ -80,11 +78,11 @@ public class BaseExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result handleThrowable(Throwable e, HttpServletRequest request) {
-        String uuid =  MDC.get("traceId");
+
         String path = request.getRequestURI();
         String params = JSONUtil.toJsonStr(request.getParameterMap());
-        log.error("系统异常 uuid={}, path={}, params={}", uuid, path, params, e);
-        return new Result(ResponseCode.ERROR_SYSTEM.getCode(), "系统错误", uuid);
+        log.error("系统异常  path={}, params={}", path, params, e);
+        return new Result(ResponseCode.ERROR_SYSTEM.getCode(), "系统错误");
     }
 
 
