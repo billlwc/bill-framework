@@ -12,7 +12,6 @@ import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -24,7 +23,6 @@ import java.lang.reflect.Method;
 @Slf4j
 @Configuration
 @ComponentScan("bill.framework.web")
-@EnableAsync
 public class WebConfig  implements WebMvcConfigurer {
 
     @Bean

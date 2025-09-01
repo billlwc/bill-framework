@@ -34,6 +34,8 @@ public class IndexController {
 
     public final SysConfigService sysConfigService;
 
+    private final UserInfo userInfo;
+
     @Operation(summary = "登录")
     @PostMapping("/login")
     @NoToken
@@ -95,7 +97,15 @@ public class IndexController {
                 {"min":0,"max":200000}
                 """;
         log.info("configValue:{}", configValue);
+        // 子线程
+        //String traceId = MDC.get("traceId");
+        Thread.ofVirtual().start(() -> {
+           // MDC.put("traceId", traceId);
+            log.info("虚拟线程日志");
+        });
+        userInfo.test();
         ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
+
 
         return  configValue;
     }
