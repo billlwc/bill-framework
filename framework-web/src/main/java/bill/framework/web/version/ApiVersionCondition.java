@@ -1,6 +1,7 @@
 package bill.framework.web.version;
 
-import bill.framework.web.exception.BusinessException;
+
+import bill.framework.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;

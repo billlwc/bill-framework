@@ -1,4 +1,4 @@
-package bill.framework.web.reply;
+package bill.framework.web.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;

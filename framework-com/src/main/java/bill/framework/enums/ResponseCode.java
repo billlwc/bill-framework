@@ -1,4 +1,4 @@
-package bill.framework.web.enums;
+package bill.framework.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

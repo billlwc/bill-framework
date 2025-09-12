@@ -1,4 +1,4 @@
-package bill.framework.web.reply;
+package bill.framework.web.bo;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;

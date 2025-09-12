@@ -1,6 +1,6 @@
 package com.bill.test.entity;
 
-import bill.framework.web.reply.BaseEntity;
+import bill.framework.web.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +23,7 @@ import java.io.Serial;
 @Accessors(chain = true)
 @TableName("sys_api_log")
 @Schema(name="SysApiLog",description="日志")
-public class SysApiLog extends BaseEntity{
+public class SysApiLog extends BaseEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;

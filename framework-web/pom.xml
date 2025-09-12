@@ -44,6 +44,12 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
+        <dependency>
+            <groupId>bill.framework</groupId>
+            <artifactId>framework-com</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

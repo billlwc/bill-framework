@@ -1,7 +1,7 @@
-package bill.framework.web.reply;
+package bill.framework.reply;
 
 
-import bill.framework.web.enums.ResponseCode;
+import bill.framework.enums.ResponseCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;

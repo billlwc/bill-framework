@@ -1,6 +1,6 @@
-package bill.framework.web.exception;
+package bill.framework.exception;
 
-import bill.framework.web.enums.ResponseCode;
+import bill.framework.enums.ResponseCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;

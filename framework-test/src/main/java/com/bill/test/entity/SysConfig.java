@@ -1,6 +1,6 @@
 package com.bill.test.entity;
 
-import bill.framework.web.reply.BaseEntity;
+import bill.framework.web.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;

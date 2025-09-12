@@ -1,13 +1,14 @@
 package bill.framework.web.exception;
 
-import bill.framework.web.enums.ResponseCode;
-import bill.framework.web.reply.Result;
+
+import bill.framework.enums.ResponseCode;
+import bill.framework.exception.BusinessException;
+import bill.framework.reply.Result;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.json.JSONUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;

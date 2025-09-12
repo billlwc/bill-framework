@@ -1,4 +1,5 @@
 package bill.framework.redis;
+import bill.framework.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -42,7 +43,7 @@ public class RedisLock {
      * @param lockName 锁名
      * @return RLock 对象
      */
-    public RLock lock(String lockName) {
+    public RLock getLock(String lockName) {
         return redisson.getLock(getKey(lockName));
     }
 
@@ -52,9 +53,39 @@ public class RedisLock {
      * @return true 表示锁已被占用，false 表示未被占用
      */
     public boolean isLock(String lockName) {
-        RLock rLock = lock(lockName);
+        RLock rLock = getLock(getKey(lockName));
         return rLock.isLocked();
     }
+
+    /**
+     * 尝试加锁，带自定义超时时间（非阻塞线程）
+     *
+     * @param key 锁名
+     * @param timeout 超时时间
+     * @param timeUnit 时间单位
+     */
+    public void tryLock(String key, long timeout, TimeUnit timeUnit,String msg) {
+        RLock rLock = getLock(key);
+        try {
+            if(!rLock.tryLock(0, timeout, timeUnit)){
+                throw new BusinessException(msg);
+            }else {
+                log.info("加锁成功: {} ", key);
+            }
+        } catch (InterruptedException e) {
+            throw new BusinessException("加锁失败:"+key);
+        }
+    }
+
+    /**
+     * 尝试加锁，带自定义超时时间（非阻塞线程）
+     * @param key 锁名
+     */
+    public void tryLock(String key){
+        tryLock(key,10,TimeUnit.SECONDS,"系统繁忙，请稍后再试");
+    }
+
+
 
     /**
      * 尝试加锁，带自定义超时时间（阻塞线程）
@@ -63,12 +94,12 @@ public class RedisLock {
      * @param timeout 超时时间
      * @param timeUnit 时间单位
      */
-    public void tryLock(String key, long timeout, TimeUnit timeUnit) {
+    public void lock(String key, long timeout, TimeUnit timeUnit) {
         // 获取 RLock 对象
-        RLock rLock = lock(key);
+        RLock rLock = getLock(key);
         // 加锁并设置自动释放时间，防止死锁
         rLock.lock(timeout, timeUnit);
-        log.info("加锁成功: {} by {}", key, Thread.currentThread().getName());
+        log.info("加锁成功: {} ", key);
     }
 
     /**
@@ -77,9 +108,11 @@ public class RedisLock {
      * @param key 锁名
 
      */
-    public void tryLock(String key) {
-         tryLock(key, 10, TimeUnit.SECONDS);
+    public void lock(String key) {
+         lock(key, 10, TimeUnit.SECONDS);
     }
+
+
 
     /**
      * 释放锁
@@ -88,7 +121,7 @@ public class RedisLock {
      */
     public void releaseLock(String key) {
         //获取所对象
-        RLock rLock = lock(key);
+        RLock rLock = getLock(key);
         // 判断当前线程是否持有锁
         if (rLock.isHeldByCurrentThread()) {
             rLock.unlock();

@@ -1,6 +1,7 @@
 package bill.framework.web.exception;
 
-import bill.framework.web.enums.ResponseCode;
+import bill.framework.enums.ResponseCode;
+import bill.framework.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Supplier;

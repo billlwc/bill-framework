@@ -2,11 +2,13 @@ package com.bill.test.controller;
 
 import bill.framework.redis.RedisLock;
 import bill.framework.redis.RedisUtil;
+import bill.framework.redis.annotation.RedisLockAnno;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
+import bill.framework.web.bo.RequestPageBO;
 import bill.framework.web.exception.ExceptionUtil;
-import bill.framework.web.reply.RequestPageBO;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,9 +19,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -73,8 +78,7 @@ public class IndexController {
     @Operation(summary = "v1")
     @GetMapping("/v1")
     public String v1() {
-        redisLock.tryLock("11");
-        //redisLock.releaseLock("11");
+
         return "v1";
     }
 
@@ -82,8 +86,29 @@ public class IndexController {
     @GetMapping("/v1")
     @ApiVersion(2)
     public String v2() {
-        redisLock.releaseLock("11");
         return "v2";
+    }
+
+    @Operation(summary = "锁1")
+    @GetMapping("/s1")
+    @NoToken
+    @RedisLockAnno(key = "'ss:'+#userInfo.getId()",message = "请稍后")
+    public String s1(@ParameterObject UserInfo userInfo) {
+       // redisLock.tryLock("ss");
+        ThreadUtil.sleep(10000);
+       // redisLock.releaseLock("ss");
+        return "s1";
+    }
+
+    @Operation(summary = "锁2")
+    @GetMapping("/s2")
+    @RedisLockAnno(key = "'ss:'+#userInfo.getId()",message = "请稍后")
+    @NoToken
+    public String s2(@ParameterObject UserInfo userInfo) {
+       // redisLock.tryLock("ss");
+        ThreadUtil.sleep(1000);
+        //redisLock.releaseLock("ss");
+        return "s2";
     }
 
 
