@@ -1,0 +1,31 @@
+package com.bill.test.service;
+
+import bill.framework.web.log.MethodLogInfo;
+import bill.framework.web.log.RequestLogInfo;
+import bill.framework.web.log.LogConsumer;
+import cn.hutool.json.JSONUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.Set;
+
+@Component
+@Slf4j
+public class AppLogConsumer implements LogConsumer {
+
+    @Override
+    public Set<String> excludePaths() {
+        return Set.of("/list","/");
+    }
+
+    @Override
+    public void requestLog(RequestLogInfo requestLog) {
+        // 可以选择写日志
+        log.info("【{}】-【{}】-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), JSONUtil.toJsonStr(requestLog));
+    }
+
+    @Override
+    public void methodLog(MethodLogInfo methodLog) {
+        log.info("【{}】-【{}】-耗时：{}ms：{}",methodLog.getTitle(),methodLog.getMessage(),methodLog.getDurationMs(), JSONUtil.toJsonStr(methodLog));
+    }
+}

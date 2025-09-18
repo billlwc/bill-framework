@@ -1,7 +1,11 @@
 package bill.framework.web.log;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.hutool.json.JSONUtil;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -28,10 +28,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     @Value("${spring.application.name:unknown-app}")
     private String appName;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired(required = false)
-    private RequestLogConsumer requestLogConsumer;
+    private LogConsumer logConsumer;
 
     @SuppressWarnings("NullableProblems")
     @Override
@@ -47,7 +46,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         MDC.put("traceId", traceId);
         try {
             // 先检查是否排除
-            if (requestLogConsumer == null || requestLogConsumer.excludePaths().contains(path)) {
+            if (logConsumer == null || logConsumer.excludePaths().contains(path)) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -62,10 +61,10 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             String ip = request.getRemoteAddr();
             String host = request.getServerName();
             String method = request.getMethod();
-            String paramsJson = objectMapper.writeValueAsString(request.getParameterMap());
+            String paramsJson = JSONUtil.toJsonStr(request.getParameterMap());
             String responseJson = new String(wrappedResponse.getContentAsByteArray(), StandardCharsets.UTF_8);
 
-            RequestLog requestLog = RequestLog.builder()
+            RequestLogInfo requestLog = RequestLogInfo.builder()
                     .appName(appName)
                     .ip(ip)
                     .host(host)
@@ -78,9 +77,11 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                     .durationMs(duration)
                     .traceId(traceId)
                     .build();
-
+            if (StpUtil.isLogin()) {
+                requestLog.setUserId((String) StpUtil.getLoginId());
+            }
             // 异步消费
-            Thread.ofVirtual().start(() -> requestLogConsumer.consume(requestLog));
+            logConsumer.requestLog(requestLog);
 
             wrappedResponse.copyBodyToResponse();
         } finally {

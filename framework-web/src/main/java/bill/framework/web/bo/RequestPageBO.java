@@ -25,7 +25,7 @@ public class RequestPageBO extends RequestBO{
     private String sortType;
 
     //防止分页缓存
-    private long timestamp=System.currentTimeMillis()/1000;
+    private long timestamp=System.currentTimeMillis()/2000;
 
     public Page getPage() {
        return new Page<>(getPageNum(),getPageSize());

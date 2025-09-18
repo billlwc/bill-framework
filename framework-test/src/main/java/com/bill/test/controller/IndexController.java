@@ -4,6 +4,7 @@ import bill.framework.redis.RedisLock;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.annotation.RedisLockAnno;
 import bill.framework.web.annotation.ApiVersion;
+import bill.framework.web.log.MethodLog;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
 import bill.framework.web.exception.ExceptionUtil;
@@ -65,7 +66,8 @@ public class IndexController {
     @Operation(summary = "分页")
     @GetMapping("/list")
     @NoToken
-    @Cacheable(value = "list:#60") //缓存
+    @Cacheable(value = "list:#2") //缓存
+    @MethodLog(title = "测试日志",message = "我的日志")
     public IPage<SysConfig> list(@ParameterObject RequestPageBO bo) {
         LambdaQueryWrapper queryWrapper= Wrappers.<SysConfig>lambdaQuery()
                 .eq(bo.getId()!=null,SysConfig::getId,bo.getId());
@@ -81,8 +83,9 @@ public class IndexController {
 
     @Operation(summary = "v1")
     @GetMapping("/v1")
+    @NoToken
     public String v1() {
-        return "v1";
+        return sysConfigService.test("1223");
     }
 
     @Operation(summary = "v1")
@@ -133,8 +136,6 @@ public class IndexController {
         });
         userInfo.test();
         ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
-
-
         return  configValue;
     }
 

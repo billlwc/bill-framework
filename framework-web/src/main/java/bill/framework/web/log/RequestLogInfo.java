@@ -11,13 +11,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestLog implements Serializable {
+public class RequestLogInfo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /** 应用名称 */
     private String appName;
+
+    /** 用户ID */
+    private String userId;
 
     /** 客户端 IP 地址 */
     private String ip;

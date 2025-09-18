@@ -1,19 +1,16 @@
 package com.bill.test.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import bill.framework.web.log.MethodLog;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bill.test.entity.SysConfig;
 import com.bill.test.mapper.SysConfigMapper;
-import jodd.util.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.cursor.Cursor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * <p>
@@ -42,6 +39,10 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig>  {
     }
 
 
+    @MethodLog(title = "测试一下",message = "哈哈哈哈")
+    public String test(String string) {
+        return "这是测试数据";
+    }
 
 
 }
