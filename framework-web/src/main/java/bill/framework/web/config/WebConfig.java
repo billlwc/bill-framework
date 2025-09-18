@@ -80,4 +80,5 @@ public class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
             reader.lines().forEach(System.out::println);
         }
     }
+
 }

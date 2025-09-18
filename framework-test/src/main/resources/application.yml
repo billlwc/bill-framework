@@ -5,7 +5,7 @@ server:
   port: 8080
 spring:
   config:
-    import: "classpath:application-web.yml"
+    import: "classpath:bill-web.yml"
   application:
     name: framework-test
   # 指定默认激活环境
