@@ -1,7 +1,5 @@
-package bill.framework.redis.aop;
+package bill.framework.redis.lock;
 
-import bill.framework.redis.RedisLock;
-import bill.framework.redis.annotation.RedisLockAnno;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,18 +21,18 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RedisLockAspect {
 
-    private final RedisLock redisLock;
+    private final RedisLockUtil redisLock;
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
     /**
      * 环绕通知：方法执行前加锁，执行完成释放锁
      */
-    @Around("@annotation(bill.framework.redis.annotation.RedisLockAnno)")
+    @Around("@annotation(bill.framework.redis.lock.RedisLock)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        RedisLockAnno lockAnnotation = method.getAnnotation(RedisLockAnno.class);
+        RedisLock lockAnnotation = method.getAnnotation(RedisLock.class);
         // 调用 parseKey
         String key = parseKey(lockAnnotation.key(), joinPoint.getArgs(), signature);
         boolean locked = false;

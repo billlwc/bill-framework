@@ -1,8 +1,8 @@
 package com.bill.test.controller;
 
-import bill.framework.redis.RedisLock;
+import bill.framework.redis.lock.RedisLockUtil;
 import bill.framework.redis.RedisUtil;
-import bill.framework.redis.annotation.RedisLockAnno;
+import bill.framework.redis.lock.RedisLock;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.log.MethodLog;
 import bill.framework.web.annotation.NoToken;
@@ -33,7 +33,7 @@ public class IndexController {
 
     public final RedisUtil redisUtil;
 
-    public final RedisLock redisLock;
+    public final RedisLockUtil redisLock;
 
     public final SysConfigService sysConfigService;
 
@@ -98,7 +98,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLockAnno(key = "'ss:'+#userInfo.getId()",message = "请稍后")
+    @RedisLock(key = "'ss:'+#userInfo.getId()",message = "请稍后")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
         ThreadUtil.sleep(10000);
@@ -108,12 +108,12 @@ public class IndexController {
 
     @Operation(summary = "锁2")
     @GetMapping("/s2")
-    @RedisLockAnno(key = "'ss:'+#userInfo.getId()",message = "请稍后")
+   // @RedisLockAnno(key = "'ss:'+#userInfo.getId()",message = "请稍后")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-       // redisLock.tryLock("ss");
+        redisLock.tryLock("ss");
         ThreadUtil.sleep(1000);
-        //redisLock.releaseLock("ss");
+        redisLock.releaseLock("ss");
         return "s2";
     }
 

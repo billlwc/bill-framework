@@ -1,4 +1,4 @@
-package bill.framework.redis.annotation;
+package bill.framework.redis.lock;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RedisLockAnno {
+public @interface RedisLock {
 
     /**
      * 锁的 key，支持 SpEL 表达式，例如：

@@ -1,5 +1,6 @@
 package bill.framework.redis.config;
 
+import bill.framework.redis.cache.RedisCacheManagers;
 import cn.hutool.json.JSONUtil;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;

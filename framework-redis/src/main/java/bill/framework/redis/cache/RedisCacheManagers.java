@@ -1,4 +1,4 @@
-package bill.framework.redis.config;
+package bill.framework.redis.cache;
 
 
 import cn.hutool.core.util.NumberUtil;

@@ -1,4 +1,4 @@
-package bill.framework.redis;
+package bill.framework.redis.lock;
 import bill.framework.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RedisLock {
+public class RedisLockUtil {
 
     /**
      * Redisson 客户端，Spring Boot 注入
