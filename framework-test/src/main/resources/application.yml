@@ -17,6 +17,6 @@ mybatis-plus:
   #type-aliases-package: com.bill.test.entity
   configuration:
     # 打印 SQL 日志
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
     default-statement-timeout: 30 #流式查询超时
     default-result-set-type: FORWARD_ONLY #FORWARD_ONLY 是游标流式查询的关键，禁止随机访问，只允许向前遍历，避免一次性加载。

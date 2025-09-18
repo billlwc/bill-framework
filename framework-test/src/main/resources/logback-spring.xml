@@ -24,7 +24,7 @@
         <file>logs/${appName:-application}.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 按天滚动 + 每天最大文件大小 50MB -->
+            <!-- 按天滚动 + 每天最大文件大小 20GB -->
             <fileNamePattern>logs/${appName:-application}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -64,10 +64,15 @@
         <appender-ref ref="FileError"/>
     </root>
 
+    <!-- MyBatis 核心日志，默认 INFO 即可 -->
+    <logger name="org.mybatis" level="INFO"/>
+    <logger name="com.baomidou.mybatisplus" level="INFO"/>
+
+
     <!-- ===============================
-         自定义包日志级别
-         =============================== -->
-    <logger name="com.example.demo" level="DEBUG" additivity="false">
+     自定义包日志级别
+     =============================== -->
+    <logger name="com.bill.test" level="DEBUG" additivity="false">
         <appender-ref ref="Console"/>
         <appender-ref ref="FileInfo"/>
         <appender-ref ref="FileError"/>

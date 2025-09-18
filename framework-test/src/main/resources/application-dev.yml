@@ -24,3 +24,6 @@ spring:
         timeout: 3000                    # Redisson 连接超时时间（毫秒）
 
 
+logging:
+  level:
+    com.bill.test: DEBUG
