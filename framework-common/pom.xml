@@ -9,7 +9,7 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>framework-com</artifactId>
+    <artifactId>framework-common</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

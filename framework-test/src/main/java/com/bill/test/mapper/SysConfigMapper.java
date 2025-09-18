@@ -8,6 +8,7 @@ import com.bill.test.entity.SysConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.cursor.Cursor;
 
 /**
  * <p>
@@ -28,6 +29,16 @@ public interface SysConfigMapper extends BaseMapper<SysConfig> {
      */
     @Select("SELECT * FROM sys_config ${ew.customSqlSegment}")
     SysConfig getSysConfigById(@Param(Constants.WRAPPER) QueryWrapper queryWrapper);
+
+
+    /**
+     * 流式查询
+     *
+     * @param queryWrapper queryWrapper
+     * @return SysConfig对象
+     */
+    @Select("SELECT * FROM sys_config ${ew.customSqlSegment}")
+    Cursor<SysConfig> selectCursor(@Param(Constants.WRAPPER) QueryWrapper queryWrapper);
 
 
     SysConfig getSysConfigByXml(@Param(Constants.WRAPPER) QueryWrapper queryWrapper);

@@ -40,11 +40,6 @@ public class WebConfig  implements WebMvcConfigurer {
 
                     @Override
                     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-                        String traceId = request.getHeader("X-Trace-Id");
-                        if (traceId == null || traceId.isEmpty()) {
-                            traceId = IdUtil.fastSimpleUUID();
-                        }
-                        MDC.put("traceId", traceId);
                         HandlerMethod handlerMethod=(HandlerMethod)handler;
                         Method method=handlerMethod.getMethod();
                         if (method.isAnnotationPresent(NoToken.class)) {

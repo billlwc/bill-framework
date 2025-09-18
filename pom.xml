@@ -29,7 +29,7 @@
     <name>bill-framework</name>
 
     <modules>
-        <module>framework-com</module>
+        <module>framework-common</module>
         <module>framework-web</module>
         <module>framework-redis</module>
         <module>framework-test</module>

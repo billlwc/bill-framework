@@ -44,9 +44,15 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
+        <!-- Spring 事务 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>bill.framework</groupId>
-            <artifactId>framework-com</artifactId>
+            <artifactId>framework-common</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

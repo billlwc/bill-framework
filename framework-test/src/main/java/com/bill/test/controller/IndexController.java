@@ -19,12 +19,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -75,10 +72,16 @@ public class IndexController {
          return  sysConfigService.page(bo.getPage(),queryWrapper);
     }
 
+    @Operation(summary = "流式查询")
+    @GetMapping("/cursor")
+    @NoToken
+    public void list() {
+        sysConfigService.processConfigs();
+    }
+
     @Operation(summary = "v1")
     @GetMapping("/v1")
     public String v1() {
-
         return "v1";
     }
 

@@ -18,3 +18,5 @@ mybatis-plus:
   configuration:
     # 打印 SQL 日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-statement-timeout: 30 #流式查询超时
+    default-result-set-type: FORWARD_ONLY #FORWARD_ONLY 是游标流式查询的关键，禁止随机访问，只允许向前遍历，避免一次性加载。
