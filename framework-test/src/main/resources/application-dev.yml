@@ -12,21 +12,7 @@ spring:
       port: 6379                  # Redis 端口
       password: 4396              # Redis 密码
       database: 0                 # 使用的 Redis 数据库索引
-      timeout: 3000ms             # 连接超时时间（毫秒）
-    redisson:
-      # Redisson 客户端单机模式配置
-      single-server-config:
-        address: redis://${spring.data.redis.host}:${spring.data.redis.port}  # Redis 地址，复用上面的 host 和 port
-        password: ${spring.data.redis.password}                               # Redis 密码，复用上面的配置
-        database: 1                       # 使用的数据库索引，复用上面的配置
-        connection-pool-size: 64          # 最大连接池大小
-        connection-min-idle-size: 10      # 最小空闲连接
-        timeout: 10000                    # 命令等待超时 10秒（默认3000ms，公网建议10秒）
-        connect-timeout: 10000            # 连接Redis超时 10秒
-        idle-connection-timeout: 10000    # 空闲连接超时，10秒后释放
-        retry-attempts: 5                 # 命令失败后重试次数
-        retry-interval: 1500              # 命令重试间隔（毫秒）
-        ping-connection-interval: 15000   # 每15秒发送心跳，保持连接存活
+      timeout: 10000ms             # 连接超时时间（毫秒）
 
 
 logging:

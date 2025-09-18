@@ -112,8 +112,6 @@ public class RedisLockUtil {
          lock(key, 10, TimeUnit.SECONDS);
     }
 
-
-
     /**
      * 释放锁
      *

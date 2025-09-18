@@ -2,6 +2,8 @@ package bill.framework.redis.config;
 
 import bill.framework.redis.cache.RedisCacheManagers;
 import cn.hutool.json.JSONUtil;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -14,12 +16,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
+import java.util.Objects;
 
 @Configuration
 @ComponentScan("bill.framework.redis")
 @EnableCaching
-public class RedisConfig {
+public class RedisConfig implements ApplicationRunner {
 
     /**
      * 缓存管理器<br/>
@@ -78,4 +84,10 @@ public class RedisConfig {
         return template;
     }
 
+    @Override
+    public void run(ApplicationArguments args) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("redis.txt"))))) {
+            reader.lines().forEach(System.out::println);
+        }
+    }
 }

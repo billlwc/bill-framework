@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +19,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 @SuppressWarnings("NullableProblems")
 @Slf4j
 @Configuration
 @ComponentScan("bill.framework.web")
-public class WebConfig  implements WebMvcConfigurer {
+public class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
 
     @Bean
     public Snowflake snowflake() {
@@ -69,4 +74,10 @@ public class WebConfig  implements WebMvcConfigurer {
     }
 
 
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("web.txt"))))) {
+            reader.lines().forEach(System.out::println);
+        }
+    }
 }
