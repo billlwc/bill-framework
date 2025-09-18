@@ -5,6 +5,8 @@ import bill.framework.web.log.RequestLogInfo;
 import bill.framework.web.log.LogConsumer;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -19,13 +21,17 @@ public class AppLogConsumer implements LogConsumer {
     }
 
     @Override
+    @Async
     public void requestLog(RequestLogInfo requestLog) {
+        MDC.put("traceId", requestLog.getTraceId());
         // 可以选择写日志
         log.info("【{}】-【{}】-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), JSONUtil.toJsonStr(requestLog));
     }
 
     @Override
+    @Async
     public void methodLog(MethodLogInfo methodLog) {
+        MDC.put("traceId", methodLog.getTraceId());
         log.info("【{}】-【{}】-耗时：{}ms：{}",methodLog.getTitle(),methodLog.getMessage(),methodLog.getDurationMs(), JSONUtil.toJsonStr(methodLog));
     }
 }

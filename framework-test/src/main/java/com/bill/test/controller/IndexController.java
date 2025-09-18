@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
@@ -130,12 +131,18 @@ public class IndexController {
                 """;
         log.info("configValue:{}", configValue);
         // 子线程
-        //String traceId = MDC.get("traceId");
+        String traceId = MDC.get("traceId");
         Thread.ofVirtual().start(() -> {
            // MDC.put("traceId", traceId);
             log.info("虚拟线程日志");
         });
-        userInfo.test();
+
+        new Thread(() -> {
+            MDC.put("traceId", traceId);
+            log.info("Thread线程日志");
+        }).start();
+
+        userInfo.test(traceId);
        // ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
         return  configValue;
     }

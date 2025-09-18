@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ public class UserInfo implements Serializable {
     private String password;
 
     @Async
-    public void test() {
-        log.info("测试日志");
+    public void test(String traceId) {
+        MDC.put("traceId", traceId);
+        log.info("@Async日志");
     }
 }
