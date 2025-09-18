@@ -1,42 +1,24 @@
 package bill.framework.web.config;
 
-import org.slf4j.MDC;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @Configuration
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
     @Override
     public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(20);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("async-");
-        // 核心：继承父线程 MDC
-        executor.setTaskDecorator(runnable -> {
-            String traceId = MDC.get("traceId");
-            return () -> {
-                try {
-                    if (traceId != null) MDC.put("traceId", traceId);
-                    runnable.run();
-                } finally {
-                    MDC.clear();
-                }
-            };
-        });
-        executor.initialize();
-        return executor;
+        // 每个 @Async 调用都会用一个虚拟线程执行
+        return Executors.newThreadPerTaskExecutor(Thread.ofVirtual().factory());
     }
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return null;
+        return (ex, method, params) -> ex.printStackTrace();
     }
 }

@@ -82,7 +82,6 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             }
             // 异步消费
             logConsumer.requestLog(requestLog);
-
             wrappedResponse.copyBodyToResponse();
         } finally {
             MDC.remove("traceId");

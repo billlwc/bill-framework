@@ -122,6 +122,7 @@ public class IndexController {
     @GetMapping("/test")
     //@Cacheable(value = "test:#60",key ="#sysConfig.id" ) //缓存
     @NoToken
+    @MethodLog(title = "123",message = "123")
     public String test(@ParameterObject SysConfig sysConfig) {
        // return sysConfigService.getOne(Wrappers.<SysConfig>lambdaQuery().le(SysConfig::getId,2).last("order by create_time desc limit 1"));
         String configValue= """
@@ -135,7 +136,7 @@ public class IndexController {
             log.info("虚拟线程日志");
         });
         userInfo.test();
-        ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
+       // ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
         return  configValue;
     }
 
