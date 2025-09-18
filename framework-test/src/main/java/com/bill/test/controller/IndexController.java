@@ -98,7 +98,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(key = "'ss:'+#userInfo.getId()",message = "请稍后")
+    @RedisLock(key = "ss",message = "请稍后")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
         ThreadUtil.sleep(10000);
