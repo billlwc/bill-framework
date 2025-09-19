@@ -110,10 +110,12 @@ public class RedisConfig implements ApplicationRunner {
         container.setConnectionFactory(connectionFactory);
         if (redisMsgConsumers != null) {
             for (RedisMsgConsumer handler : redisMsgConsumers) {
-                log.info("注册 Redis 监听器，监听 Topic: {}", handler.redisTopic());
-                MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "redisMessage");
-                adapter.afterPropertiesSet(); // 关键
-                container.addMessageListener(adapter, new PatternTopic(handler.redisTopic()));
+                if(!handler.redisDelay()) {
+                    log.info("注册 Redis 监听器，监听 Topic: {}", handler.redisTopic());
+                    MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "redisMessage");
+                    adapter.afterPropertiesSet(); // 关键
+                    container.addMessageListener(adapter, new PatternTopic(handler.redisTopic()));
+                }
             }
         }
         return container;
