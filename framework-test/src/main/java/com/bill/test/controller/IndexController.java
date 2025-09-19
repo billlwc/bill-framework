@@ -158,8 +158,8 @@ public class IndexController {
     @GetMapping("/no")
     @NoToken
     public void no() {
+
         redisUtil.convertAndSend("sysConfig","1223");
-        redisUtil.convertAndSend("MyRedis","1223");
     }
 
 
