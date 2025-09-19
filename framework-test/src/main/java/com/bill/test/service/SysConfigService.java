@@ -1,5 +1,6 @@
 package com.bill.test.service;
 
+import bill.framework.redis.message.RedisMsgConsumer;
 import bill.framework.web.log.MethodLog;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,7 +23,7 @@ import java.io.IOException;
  */
 @Service
 @Slf4j
-public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig>  {
+public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> implements RedisMsgConsumer {
 
 
     @Transactional(readOnly = true)
@@ -45,4 +46,13 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig>  {
     }
 
 
+    @Override
+    public void redisMessage(String message) {
+        log.info("sysConfig消费到消息啦:{}", message);
+    }
+
+    @Override
+    public String redisTopic() {
+        return "sysConfig";
+    }
 }

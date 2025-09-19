@@ -34,11 +34,15 @@ public class RedisLockAspect {
         Method method = signature.getMethod();
         RedisLock lockAnnotation = method.getAnnotation(RedisLock.class);
         // 调用 parseKey
-        String key = parseKey(lockAnnotation.key(), joinPoint.getArgs(), signature);
+        String key = parseKey(lockAnnotation.value(), joinPoint.getArgs(), signature);
         boolean locked = false;
         try {
             // 2. 尝试获取锁，非阻塞
-            redisLock.tryLock(key,lockAnnotation.timeout(), lockAnnotation.timeUnit(), lockAnnotation.message());
+            if(lockAnnotation.block()){
+                redisLock.lock(key,lockAnnotation.timeout(), lockAnnotation.timeUnit());
+            }else {
+                redisLock.tryLock(key,lockAnnotation.timeout(), lockAnnotation.timeUnit(), lockAnnotation.message());
+            }
             locked = true;
             // 3. 执行目标方法
             return joinPoint.proceed();

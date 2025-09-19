@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -431,11 +434,41 @@ public class RedisUtil {
     /**
      * 发布消息
      *
-     * @param channel 消息通道
+     * @param topic 消息通道
      * @param message 消息内容
      */
-    public void convertAndSend(String channel, Object message) {
-        redisTemplates.convertAndSend(channel, message);
+    public void convertAndSend(String topic, Object message) {
+        redisTemplates.convertAndSend(topic, message);
+    }
+
+
+    /**
+     * 生成分布式唯一订单号
+     * 规则：yyyyMMddHHmmss + 5位递增序列，不足补0
+     *
+     * @param prefixKey Redis中用于计数的前缀key，例如："ORDER:SEQ"
+     * @return 唯一订单号
+     */
+    public BigInteger generateOrderNo(String prefixKey) {
+        // 获取当前时间戳
+        LocalDateTime now = LocalDateTime.now();
+        String timePart = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")); // yyyyMMddHHmmss
+        // Redis Key，按秒维度区分，保证每秒自增从1开始
+        String redisKey = prefixKey + ":" + timePart;
+        // 自增序列号，Redis天然支持分布式原子递增
+        Long seq = this.incr(redisKey, 1);
+        // 设置1秒后自动过期，保证内存不无限增长
+        this.expire(redisKey, 2);
+        // 限制最大5位
+        if (seq > 99999) {
+            throw new RuntimeException("订单号序列超过最大值99999，请检查系统是否超高并发！");
+        }
+        // 补全5位，不足补0
+        String seqPart = String.format("%05d", seq);
+        // 拼接最终订单号
+        String finalOrderNo = timePart + seqPart;
+        // 返回 BigInteger
+        return new BigInteger(finalOrderNo);
     }
 
 }

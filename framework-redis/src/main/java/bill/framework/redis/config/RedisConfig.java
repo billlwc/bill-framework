@@ -1,7 +1,10 @@
 package bill.framework.redis.config;
 
 import bill.framework.redis.cache.RedisCacheManagers;
+import bill.framework.redis.message.RedisMsgConsumer;
 import cn.hutool.json.JSONUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cache.CacheManager;
@@ -13,6 +16,9 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -20,26 +26,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 
 @Configuration
 @ComponentScan("bill.framework.redis")
 @EnableCaching
+@Slf4j
 public class RedisConfig implements ApplicationRunner {
 
-    /**
-     * 缓存管理器<br/>
-     * 扩展RedisCache，默认TTL为60秒
-     * @return CacheManager
-     */
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(60))
-                .computePrefixWith(cacheName -> "caching:" + cacheName);
-        return new RedisCacheManagers(RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory),
-                defaultCacheConfig);
-    }
+
+    @Autowired(required = false)
+    private List<RedisMsgConsumer> redisMsgHandlers;
+
 
     /**
      * 序列化
@@ -83,6 +82,45 @@ public class RedisConfig implements ApplicationRunner {
         template.afterPropertiesSet();
         return template;
     }
+
+    /**
+     * 缓存管理器<br/>
+     * 扩展RedisCache，默认TTL为60秒
+     * @return CacheManager
+     */
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofSeconds(60))
+                .computePrefixWith(cacheName -> "caching:" + cacheName);
+        return new RedisCacheManagers(RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory),
+                defaultCacheConfig);
+    }
+
+
+
+    /**
+     * 核心监听容器
+     */
+    @Bean
+    public RedisMessageListenerContainer listenerContainer(
+            RedisConnectionFactory connectionFactory) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+
+        // 监听 "order:new" 频道
+        if (redisMsgHandlers != null) {
+            for (RedisMsgConsumer handler : redisMsgHandlers) {
+                log.info("注册 Redis 监听器，监听 Topic: {}", handler.redisTopic());
+                MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "redisMessage");
+                adapter.afterPropertiesSet(); // 关键
+                container.addMessageListener(adapter, new PatternTopic(handler.redisTopic()));
+            }
+        }
+        return container;
+    }
+
+
 
     @Override
     public void run(ApplicationArguments args) throws IOException {

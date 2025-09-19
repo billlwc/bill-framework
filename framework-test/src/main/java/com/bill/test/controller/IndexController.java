@@ -19,11 +19,16 @@ import com.bill.test.service.SysConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigInteger;
+import java.util.Set;
+import java.util.concurrent.*;
 
 
 @Slf4j
@@ -99,7 +104,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(key = "ss",message = "请稍后")
+    @RedisLock(value = "ss",timeout = 20,timeUnit= TimeUnit.SECONDS,message = "请稍后")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
         ThreadUtil.sleep(10000);
@@ -109,12 +114,12 @@ public class IndexController {
 
     @Operation(summary = "锁2")
     @GetMapping("/s2")
-   // @RedisLockAnno(key = "'ss:'+#userInfo.getId()",message = "请稍后")
+    @RedisLock("ss")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        redisLock.tryLock("ss");
+        //redisLock.tryLock("ss");
         ThreadUtil.sleep(1000);
-        redisLock.releaseLock("ss");
+       // redisLock.releaseLock("ss");
         return "s2";
     }
 
@@ -146,6 +151,18 @@ public class IndexController {
        // ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
         return  configValue;
     }
+
+
+    @SneakyThrows
+    @Operation(summary = "测试消息")
+    @GetMapping("/no")
+    @NoToken
+    public void no() {
+        redisUtil.convertAndSend("sysConfig","1223");
+        redisUtil.convertAndSend("MyRedis","1223");
+    }
+
+
 
 
 }

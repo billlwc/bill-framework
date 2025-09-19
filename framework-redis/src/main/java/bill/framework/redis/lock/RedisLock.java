@@ -19,12 +19,17 @@ public @interface RedisLock {
      * 锁的 key，支持 SpEL 表达式，例如：
      * key = "'user:' + #userId"
      */
-    String key();
+    String value() default "";
 
     /**
      * 锁超时时间，默认 10 秒
      */
     long timeout() default 10;
+
+    /**
+     * 是否阻塞，默认false
+     */
+    boolean block() default false;
 
     /**
      * 时间单位，默认秒
