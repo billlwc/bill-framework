@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>bill.framework</groupId>
-            <artifactId>framework-common</artifactId>
+            <artifactId>framework-base</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
