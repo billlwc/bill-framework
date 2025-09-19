@@ -24,7 +24,7 @@
 
     <groupId>bill.framework</groupId>
     <artifactId>bill-framework</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>pom</packaging>
     <name>bill-framework</name>
 
@@ -74,49 +74,24 @@
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>bill.framework</groupId>
+                <artifactId>framework-base</artifactId>
+                <version>${version}</version>
+            </dependency>
             <dependency>
                 <groupId>bill.framework</groupId>
                 <artifactId>framework-web</artifactId>
-                <version>1.0</version>
+                <version>${version}</version>
             </dependency>
-
             <dependency>
                 <groupId>bill.framework</groupId>
                 <artifactId>framework-redis</artifactId>
-                <version>1.0</version>
+                <version>${version}</version>
             </dependency>
         </dependencies>
-
-
     </dependencyManagement>
-
-    <dependencies>
-        <!-- Web & Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Hutool 工具库 -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-
-        <!-- aop -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-    </dependencies>
 
     <distributionManagement>
         <repository>
