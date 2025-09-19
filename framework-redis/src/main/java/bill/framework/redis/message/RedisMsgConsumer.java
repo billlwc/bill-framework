@@ -6,6 +6,6 @@ public interface RedisMsgConsumer {
 
     String redisTopic();
 
-    //是否支持延时
-    boolean redisDelay();
+    //是否是队列消息
+    boolean queue();
 }

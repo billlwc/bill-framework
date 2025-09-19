@@ -18,7 +18,7 @@ public class MyMsgConsumer implements RedisMsgConsumer {
     }
 
     @Override
-    public boolean redisDelay() {
+    public boolean queue() {
         return true;
     }
 }

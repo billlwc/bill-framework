@@ -57,7 +57,7 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
     }
 
     @Override
-    public boolean redisDelay() {
+    public boolean queue() {
         return true;
     }
 

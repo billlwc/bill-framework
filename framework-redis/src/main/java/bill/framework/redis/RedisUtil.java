@@ -440,27 +440,39 @@ public class RedisUtil {
     // ============================ Pub/Sub ============================
 
     /**
-     * 发布消息
+     * 即时发送消息到 Redis 频道（Pub/Sub）
      *
-     * @param topic 消费者队列名
+     * @param topic 消息频道
      * @param message 消息内容
      */
-    public void sendMessage(String topic, Object message) {
+    public void publishMessage(String topic, Object message) {
         redisTemplates.convertAndSend(topic, message);
     }
 
     /**
-     * 发送延迟消息
+     * 发送队列消息（立即消费）
      *
-     * @param topic        消费者队列名，例如 "order:new"
-     * @param message      消息内容
-     * @param delaySeconds 延迟秒数
+     * @param queueName 消费者队列名，例如 "order:new"
+     * @param message 消息内容
      */
-    public void sendMessage(String topic, Object message, long delaySeconds,TimeUnit timeUnit) {
-        RQueue<Object> queue = redissonClient.getQueue(topic);
-        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(topic, k -> redissonClient.getDelayedQueue(queue));
-        delayedQueue.offer(message, delaySeconds, timeUnit);
+    public void sendQueueMessage(String queueName, Object message) {
+        sendQueueMessage(queueName, message, 0, TimeUnit.SECONDS);
     }
+
+    /**
+     * 发送队列消息（可延迟消费）
+     *
+     * @param queueName 消费者队列名，例如 "order:new"
+     * @param message 消息内容
+     * @param delay 延迟时间
+     * @param timeUnit 延迟时间单位
+     */
+    public void sendQueueMessage(String queueName, Object message, long delay, TimeUnit timeUnit) {
+        RQueue<Object> queue = redissonClient.getQueue(queueName);
+        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(queueName, k -> redissonClient.getDelayedQueue(queue));
+        delayedQueue.offer(message, delay, timeUnit);
+    }
+
 
     /**
      * 清理延迟队列（可选，用于系统停机或测试）

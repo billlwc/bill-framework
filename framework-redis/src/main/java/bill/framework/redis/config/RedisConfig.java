@@ -110,7 +110,7 @@ public class RedisConfig implements ApplicationRunner {
         container.setConnectionFactory(connectionFactory);
         if (redisMsgConsumers != null) {
             for (RedisMsgConsumer handler : redisMsgConsumers) {
-                if(!handler.redisDelay()) {
+                if(!handler.queue()) {
                     log.info("注册 Redis 监听器，监听 Topic: {}", handler.redisTopic());
                     MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "redisMessage");
                     adapter.afterPropertiesSet(); // 关键
@@ -126,7 +126,7 @@ public class RedisConfig implements ApplicationRunner {
         // 使用单独线程阻塞监听队列
         if(redisMsgConsumers!=null){
             for (RedisMsgConsumer handler : redisMsgConsumers) {
-                if(handler.redisDelay()){
+                if(handler.queue()){
                   Thread.ofVirtual().start(() -> {
                       RBlockingQueue<Object> queue = redissonClient.getBlockingQueue(handler.redisTopic());
                       log.info("注册 Redis 队列，监听 Topic: {}", handler.redisTopic());
