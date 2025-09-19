@@ -1,4 +1,4 @@
-package com.bill.test.service;
+package com.bill.test.consumer;
 
 import bill.framework.web.log.MethodLogInfo;
 import bill.framework.web.log.RequestLogInfo;

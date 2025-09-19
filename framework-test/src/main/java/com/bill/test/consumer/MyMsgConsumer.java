@@ -1,4 +1,4 @@
-package com.bill.test.controller;
+package com.bill.test.consumer;
 
 import bill.framework.redis.message.RedisMsgConsumer;
 import lombok.extern.slf4j.Slf4j;

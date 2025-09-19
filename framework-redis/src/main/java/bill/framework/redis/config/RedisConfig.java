@@ -42,7 +42,7 @@ public class RedisConfig implements ApplicationRunner {
     private List<RedisMsgConsumer> redisMsgConsumers;
 
     @Autowired
-    private  RedissonClient redissonClient;
+    private RedissonClient redissonClient;
     /**
      * 序列化
      * @param factory factory
