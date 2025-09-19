@@ -55,4 +55,11 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
     public String redisTopic() {
         return "sysConfig";
     }
+
+    @Override
+    public boolean redisDelay() {
+        return true;
+    }
+
+
 }

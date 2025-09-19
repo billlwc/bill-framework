@@ -3,7 +3,10 @@ package bill.framework.redis.config;
 import bill.framework.redis.cache.RedisCacheManagers;
 import bill.framework.redis.message.RedisMsgConsumer;
 import cn.hutool.json.JSONUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -35,11 +38,11 @@ import java.util.Objects;
 @Slf4j
 public class RedisConfig implements ApplicationRunner {
 
-
     @Autowired(required = false)
-    private List<RedisMsgConsumer> redisMsgHandlers;
+    private List<RedisMsgConsumer> redisMsgConsumers;
 
-
+    @Autowired
+    private  RedissonClient redissonClient;
     /**
      * 序列化
      * @param factory factory
@@ -98,19 +101,15 @@ public class RedisConfig implements ApplicationRunner {
     }
 
 
-
     /**
-     * 核心监听容器
+     * 消息核心监听容器
      */
     @Bean
-    public RedisMessageListenerContainer listenerContainer(
-            RedisConnectionFactory connectionFactory) {
+    public RedisMessageListenerContainer listenerContainer(RedisConnectionFactory connectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-
-        // 监听 "order:new" 频道
-        if (redisMsgHandlers != null) {
-            for (RedisMsgConsumer handler : redisMsgHandlers) {
+        if (redisMsgConsumers != null) {
+            for (RedisMsgConsumer handler : redisMsgConsumers) {
                 log.info("注册 Redis 监听器，监听 Topic: {}", handler.redisTopic());
                 MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "redisMessage");
                 adapter.afterPropertiesSet(); // 关键
@@ -120,6 +119,31 @@ public class RedisConfig implements ApplicationRunner {
         return container;
     }
 
+    @PostConstruct
+    public void initQueue() {
+        // 使用单独线程阻塞监听队列
+        if(redisMsgConsumers!=null){
+            for (RedisMsgConsumer handler : redisMsgConsumers) {
+                if(handler.redisDelay()){
+                  Thread.ofVirtual().start(() -> {
+                      RBlockingQueue<Object> queue = redissonClient.getBlockingQueue(handler.redisTopic());
+                      log.info("注册 Redis 队列，监听 Topic: {}", handler.redisTopic());
+                      while (!Thread.currentThread().isInterrupted()) {
+                          try {
+                              Object message = queue.take(); // 阻塞等待新消息
+                              handler.redisMessage(JSONUtil.toJsonStr(message));
+                          } catch (InterruptedException e) {
+                              Thread.currentThread().interrupt(); // 保留中断状态
+                              log.warn("虚拟线程被中断，但继续等待消息", e);
+                          } catch (Exception e) {
+                              log.error("处理消息异常, topic={}", handler.redisTopic(), e);
+                          }
+                      }
+                  });
+                }
+            }
+        }
+    }
 
 
     @Override

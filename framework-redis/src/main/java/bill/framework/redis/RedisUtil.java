@@ -2,6 +2,9 @@ package bill.framework.redis;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RDelayedQueue;
+import org.redisson.api.RQueue;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +26,10 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplates;
+
+    private final RedissonClient redissonClient;
+
+    private final Map<String, RDelayedQueue<Object>> delayedQueueMap = new ConcurrentHashMap<>();
 
     // ============================ 通用操作 ============================
 
@@ -434,11 +442,33 @@ public class RedisUtil {
     /**
      * 发布消息
      *
-     * @param topic 消息通道
+     * @param topic 消费者队列名
      * @param message 消息内容
      */
-    public void convertAndSend(String topic, Object message) {
+    public void sendMessage(String topic, Object message) {
         redisTemplates.convertAndSend(topic, message);
+    }
+
+    /**
+     * 发送延迟消息
+     *
+     * @param topic        消费者队列名，例如 "order:new"
+     * @param message      消息内容
+     * @param delaySeconds 延迟秒数
+     */
+    public void sendMessage(String topic, Object message, long delaySeconds,TimeUnit timeUnit) {
+        RQueue<Object> queue = redissonClient.getQueue(topic);
+        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(topic, k -> redissonClient.getDelayedQueue(queue));
+        delayedQueue.offer(message, delaySeconds, timeUnit);
+    }
+
+    /**
+     * 清理延迟队列（可选，用于系统停机或测试）
+     */
+    public void removeMessage(String topic) {
+        RQueue<Object> queue = redissonClient.getQueue(topic);
+        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(topic, k -> redissonClient.getDelayedQueue(queue));
+        delayedQueue.destroy();
     }
 
 

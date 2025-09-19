@@ -11,6 +11,8 @@ import bill.framework.web.exception.ExceptionUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -158,8 +160,13 @@ public class IndexController {
     @GetMapping("/no")
     @NoToken
     public void no() {
-
-        redisUtil.convertAndSend("sysConfig","1223");
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.set("code","延时消息");
+        redisUtil.sendMessage("sysConfig",jsonObject,5,TimeUnit.SECONDS);
+        redisUtil.sendMessage("MyMsg",jsonObject,10,TimeUnit.SECONDS);
+        jsonObject.set("code","实时消息");
+        redisUtil.sendMessage("sysConfig",jsonObject);
+        redisUtil.sendMessage("MyMsg",jsonObject);
     }
 
 
