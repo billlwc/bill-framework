@@ -29,8 +29,6 @@ public class RedisUtil {
 
     private final RedissonClient redissonClient;
 
-    private final Map<String, RDelayedQueue<Object>> delayedQueueMap = new ConcurrentHashMap<>();
-
     // ============================ 通用操作 ============================
 
     /**
@@ -449,6 +447,9 @@ public class RedisUtil {
         redisTemplates.convertAndSend(topic, message);
     }
 
+
+    private final Map<String, RDelayedQueue<Object>> delayedQueueMap = new ConcurrentHashMap<>();
+
     /**
      * 发送队列消息（立即消费）
      *
@@ -459,6 +460,7 @@ public class RedisUtil {
         sendQueueMessage(queueName, message, 0, TimeUnit.SECONDS);
     }
 
+
     /**
      * 发送队列消息（可延迟消费）
      *
@@ -467,22 +469,29 @@ public class RedisUtil {
      * @param delay 延迟时间
      * @param timeUnit 延迟时间单位
      */
+
     public void sendQueueMessage(String queueName, Object message, long delay, TimeUnit timeUnit) {
         RQueue<Object> queue = redissonClient.getQueue(queueName);
-        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(queueName, k -> redissonClient.getDelayedQueue(queue));
-        delayedQueue.offer(message, delay, timeUnit);
+        try {
+            if (delay <= 0) {
+                queue.offer(message);
+            } else {
+                RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(queueName, k -> redissonClient.getDelayedQueue(queue));
+                delayedQueue.offer(message, delay, timeUnit);
+            }
+        } catch (Exception e) {
+            log.error("发送队列消息失败: queue={}, message={}", queueName, message, e);
+        }
     }
-
 
     /**
      * 清理延迟队列（可选，用于系统停机或测试）
      */
-    public void removeMessage(String topic) {
-        RQueue<Object> queue = redissonClient.getQueue(topic);
-        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(topic, k -> redissonClient.getDelayedQueue(queue));
+    public void removeMessage(String queueName) {
+        RQueue<Object> queue = redissonClient.getQueue(queueName);
+        RDelayedQueue<Object> delayedQueue = delayedQueueMap.computeIfAbsent(queueName, k -> redissonClient.getDelayedQueue(queue));
         delayedQueue.destroy();
     }
-
 
     /**
      * 生成分布式唯一订单号
