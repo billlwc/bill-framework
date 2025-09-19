@@ -157,11 +157,11 @@ public class IndexController {
     public void no() {
         JSONObject jsonObject=new JSONObject();
         jsonObject.set("code","延时消息");
-        redisUtil.sendQueueMessage("sysConfig",jsonObject);
-        redisUtil.sendQueueMessage("MyMsg",jsonObject,3,TimeUnit.SECONDS);
+        //redisUtil.sendQueueMessage("sysConfig",jsonObject);
+        //redisUtil.sendQueueMessage("MyMsg",jsonObject,3,TimeUnit.SECONDS);
 
         jsonObject.set("code","实时消息");
-        redisUtil.publishMessage("sysConfig",jsonObject);
+        redisUtil.sendQueueMessage("sysConfig",jsonObject);
         redisUtil.publishMessage("MyMsg",jsonObject);
     }
 

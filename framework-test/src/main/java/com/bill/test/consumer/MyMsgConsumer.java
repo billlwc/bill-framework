@@ -19,6 +19,6 @@ public class MyMsgConsumer implements RedisMsgConsumer {
 
     @Override
     public boolean queue() {
-        return true;
+        return false;
     }
 }

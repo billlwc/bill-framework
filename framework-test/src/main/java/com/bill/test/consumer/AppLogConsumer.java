@@ -25,7 +25,7 @@ public class AppLogConsumer implements LogConsumer {
     public void requestLog(RequestLogInfo requestLog) {
         MDC.put("traceId", requestLog.getTraceId());
         // 可以选择写日志
-        log.info("【{}】-【{}】-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), JSONUtil.toJsonStr(requestLog));
+      //  log.info("【{}】-【{}】-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), JSONUtil.toJsonStr(requestLog));
     }
 
     @Override
