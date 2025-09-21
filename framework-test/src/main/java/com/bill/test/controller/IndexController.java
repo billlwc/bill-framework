@@ -134,17 +134,9 @@ public class IndexController {
         log.info("configValue:{}", configValue);
         // 子线程
         String traceId = MDC.get("traceId");
-        Thread.ofVirtual().start(() -> {
-           // MDC.put("traceId", traceId);
-            log.info("虚拟线程日志");
-        });
-
-        new Thread(() -> {
-            MDC.put("traceId", traceId);
-            log.info("Thread线程日志");
-        }).start();
 
         userInfo.test(traceId);
+        userInfo.test2(traceId);
        // ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
         return  configValue;
     }

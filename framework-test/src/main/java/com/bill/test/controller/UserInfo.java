@@ -22,7 +22,13 @@ public class UserInfo implements Serializable {
 
     @Async
     public void test(String traceId) {
-        MDC.put("traceId", traceId);
+       // MDC.put("traceId", traceId);
         log.info("@Async日志");
+    }
+
+    @Async("virtual")
+    public void test2(String traceId) {
+       // MDC.put("traceId", traceId);
+        log.info("@Virtual日志");
     }
 }
