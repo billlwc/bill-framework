@@ -30,8 +30,10 @@ public class VirtualThreadMdcExecutor {
     }
 
 
-    /** Runnable 版本 */
-    public static Thread start(Runnable task) {
+    /**
+     * Runnable 版本
+     */
+    public static void start(Runnable task) {
         Map<String, String> contextMap = MDC.getCopyOfContextMap();
         Thread thread= factory.newThread(() -> {
             Map<String, String> originalContext = MDC.getCopyOfContextMap();
@@ -44,7 +46,6 @@ public class VirtualThreadMdcExecutor {
             }
         });
         thread.start();
-        return thread;
     }
 
     /** Callable 版本，返回 Future */
