@@ -133,7 +133,7 @@ public class IndexController {
                 """;
         log.info("configValue:{}", configValue);
         // 子线程
-        ExecutorService executor = VirtualThreadMdcExecutor.newMdcVirtualThreadExecutor();
+        ExecutorService executor = VirtualThreadMdcExecutor.newVirtualThreadPerTaskExecutor();
         executor.submit(() -> {
             log.info("线程池测试");
         });

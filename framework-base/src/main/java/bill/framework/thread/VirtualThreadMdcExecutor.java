@@ -12,7 +12,7 @@ public class VirtualThreadMdcExecutor {
      *
      * @return Executor
      */
-    public static ExecutorService newMdcVirtualThreadExecutor() {
+    public static ExecutorService newVirtualThreadPerTaskExecutor() {
         ThreadFactory factory = Thread.ofVirtual().name("virtual-mdc-", 0).factory();
         return Executors.newThreadPerTaskExecutor(runnable -> {
             Map<String, String> contextMap = MDC.getCopyOfContextMap();
