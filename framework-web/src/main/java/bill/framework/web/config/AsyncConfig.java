@@ -10,7 +10,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
@@ -19,21 +21,32 @@ import java.util.concurrent.ThreadFactory;
 @Slf4j
 public class AsyncConfig implements AsyncConfigurer {
 
+
+
     @Bean(name = "virtual")
-    public Executor getExecutor() {
+    public Executor getVirtualExecutor() {
         // 使用虚拟线程，并且命名，便于日志和调试
         ThreadFactory threadFactory = Thread.ofVirtual().name("async-virtual-", 0).factory();
-        return Executors.newThreadPerTaskExecutor(threadFactory);
+        return runnable -> {
+            String traceId = MDC.get("traceId");
+            threadFactory.newThread(() -> {
+                try {
+                    if (traceId != null) MDC.put("traceId", traceId);
+                    runnable.run();
+                } finally {
+                    MDC.clear();
+                }
+            }).start();
+        };
     }
 
-    @Override
-    public Executor getAsyncExecutor() {
+    @Bean(name = "async")
+    public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(50);
         executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("async-");
-
         // 核心：继承父线程 MDC
         executor.setTaskDecorator(runnable -> {
             String traceId = MDC.get("traceId");
@@ -48,6 +61,11 @@ public class AsyncConfig implements AsyncConfigurer {
         });
         executor.initialize();
         return executor;
+    }
+
+    @Override
+    public Executor getAsyncExecutor() {
+        return getVirtualExecutor();
 
     }
 

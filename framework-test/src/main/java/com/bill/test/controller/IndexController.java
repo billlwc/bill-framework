@@ -3,6 +3,7 @@ package com.bill.test.controller;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisLock;
 import bill.framework.redis.lock.RedisLockUtil;
+import bill.framework.thread.VirtualThreadMdcExecutor;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
@@ -20,12 +21,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 @Slf4j
@@ -126,17 +126,33 @@ public class IndexController {
     //@Cacheable(value = "test:#60",key ="#sysConfig.id" ) //缓存
     @NoToken
     @MethodLog(title = "123",message = "123")
-    public String test(@ParameterObject SysConfig sysConfig) {
+    public String test(@ParameterObject SysConfig sysConfig) throws ExecutionException, InterruptedException {
        // return sysConfigService.getOne(Wrappers.<SysConfig>lambdaQuery().le(SysConfig::getId,2).last("order by create_time desc limit 1"));
         String configValue= """
                 {"min":0,"max":200000}
                 """;
         log.info("configValue:{}", configValue);
         // 子线程
-        String traceId = MDC.get("traceId");
+        ExecutorService executor = VirtualThreadMdcExecutor.newMdcVirtualThreadExecutor();
+        executor.submit(() -> {
+            log.info("线程池测试");
+        });
+        executor.shutdown();
 
-        userInfo.test(traceId);
-        userInfo.test2(traceId);
+        Thread.ofVirtual().start(() -> log.info("虚拟线程池测试"));
+        VirtualThreadMdcExecutor.start(() -> log.info("虚拟线程池测试1"));
+        Future<String> future= VirtualThreadMdcExecutor.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                log.info("ok");
+                return "124";
+            }
+        });
+
+        log.info(future.get());
+
+        userInfo.test();
+        userInfo.test2();
        // ExceptionUtil.exception(StrUtil.isNotEmpty(configValue),"报错了");
         return  configValue;
     }

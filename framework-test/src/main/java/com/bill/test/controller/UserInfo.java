@@ -21,14 +21,12 @@ public class UserInfo implements Serializable {
     private String password;
 
     @Async
-    public void test(String traceId) {
-       // MDC.put("traceId", traceId);
+    public void test( ) {
         log.info("@Async日志");
     }
 
-    @Async("virtual")
-    public void test2(String traceId) {
-       // MDC.put("traceId", traceId);
+    @Async("async")
+    public void test2( ) {
         log.info("@Virtual日志");
     }
 }
