@@ -5,7 +5,7 @@ import org.slf4j.MDC;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class VirtualThreadMdcExecutor {
+public class ExecutorsMdcVirtual {
     private static final ThreadFactory factory = Thread.ofVirtual().name("virtual-mdc-", 0).factory();
 
     /**

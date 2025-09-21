@@ -1,12 +1,11 @@
 package com.bill.test.controller;
 
-import bill.framework.thread.VirtualThreadMdcExecutor;
+import bill.framework.thread.ExecutorsMdcVirtual;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +28,9 @@ public class UserInfo implements Serializable {
     }
 
     @SneakyThrows
-    @Async("async")
+   // @Async("async")
     public void test2( ) {
-        try (ExecutorService executor = VirtualThreadMdcExecutor.newVirtualThreadPerTaskExecutor()) {
+        try (ExecutorService executor = ExecutorsMdcVirtual.newVirtualThreadPerTaskExecutor()) {
             Future<Boolean> future= executor.submit(this::test3);
             future.get();
         }

@@ -3,7 +3,7 @@ package com.bill.test.controller;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisLock;
 import bill.framework.redis.lock.RedisLockUtil;
-import bill.framework.thread.VirtualThreadMdcExecutor;
+import bill.framework.thread.ExecutorsMdcVirtual;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
@@ -133,15 +133,15 @@ public class IndexController {
                 """;
         log.info("configValue:{}", configValue);
         // 子线程
-        ExecutorService executor = VirtualThreadMdcExecutor.newVirtualThreadPerTaskExecutor();
+        ExecutorService executor = ExecutorsMdcVirtual.newVirtualThreadPerTaskExecutor();
         executor.submit(() -> {
             log.info("线程池测试");
         });
         executor.shutdown();
 
         Thread.ofVirtual().start(() -> log.info("虚拟线程池测试"));
-        VirtualThreadMdcExecutor.start(() -> log.info("虚拟线程池测试1"));
-        Future<String> future= VirtualThreadMdcExecutor.submit(new Callable<String>() {
+        ExecutorsMdcVirtual.start(() -> log.info("虚拟线程池测试1"));
+        Future<String> future= ExecutorsMdcVirtual.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
                 log.info("ok");
