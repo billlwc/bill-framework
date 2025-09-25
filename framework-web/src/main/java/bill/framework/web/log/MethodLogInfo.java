@@ -22,15 +22,6 @@ public class MethodLogInfo implements Serializable {
     /** 用户ID */
     private String userId;
 
-    /** 客户端 IP 地址 */
-    private String ip;
-
-    /** 请求域名 */
-    private String host;
-
-    /** HTTP 方法 GET/POST/PUT/DELETE */
-    private String methodName;
-
     /** 请求路径 */
     private String path;
 

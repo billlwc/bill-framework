@@ -25,6 +25,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.concurrent.*;
 
 
@@ -160,9 +161,10 @@ public class IndexController {
 
     @SneakyThrows
     @Operation(summary = "测试消息")
-    @GetMapping("/no")
+    @GetMapping("/no/{id}")
     @NoToken
-    public void no() {
+    public void no(@PathVariable BigInteger id) {
+        log.info("id:{}", id);
         JSONObject jsonObject=new JSONObject();
         jsonObject.set("code","延时消息");
         //redisUtil.sendQueueMessage("sysConfig",jsonObject);

@@ -34,8 +34,11 @@ public class RequestLogInfo implements Serializable {
     /** 请求路径 */
     private String path;
 
-    /** 请求参数（JSON 字符串） */
-    private String params;
+    /** 请求表单参数（JSON 字符串） */
+    private String formParams;
+
+    /** JSON 或原始请求体*/
+    private String body;
 
     /** 返回值（JSON 字符串） */
     private String response;
