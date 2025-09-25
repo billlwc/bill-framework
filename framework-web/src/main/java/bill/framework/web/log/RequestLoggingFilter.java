@@ -38,24 +38,25 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     @Override
     @SneakyThrows
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-        String path = request.getRequestURI();
-        // 先检查是否排除
-        if (logConsumer == null || logConsumer.excludePaths().contains(path)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        // 包装 Request，必须在第一次进入 Filter 时就包裹
-        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
-        ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
-
         long startMillis = System.currentTimeMillis();
         LocalDateTime startTime = LocalDateTime.now();
+        String path = request.getRequestURI();
         String traceId = request.getHeader("X-Trace-Id");
         if (traceId == null || traceId.isEmpty()) {
             traceId = IdUtil.fastSimpleUUID();
         }
         MDC.put("traceId", traceId);
         try {
+            // 先检查是否排除
+            if (logConsumer == null || logConsumer.excludePaths().contains(path)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // 包装 Request，必须在第一次进入 Filter 时就包裹
+            ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
+            ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
+
             filterChain.doFilter(wrappedRequest, wrappedResponse);
             long duration = System.currentTimeMillis() - startMillis;
             LocalDateTime endTime = LocalDateTime.now();
