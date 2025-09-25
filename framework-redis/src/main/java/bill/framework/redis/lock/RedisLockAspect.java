@@ -48,11 +48,7 @@ public class RedisLockAspect {
             return joinPoint.proceed();
         } finally {
             if (rLock!=null) {
-                try {
-                    redisLock.releaseLock(rLock);
-                } catch (Exception e) {
-                    log.error("释放锁失败: {}", key, e);
-                }
+                redisLock.releaseLock(rLock);
             }
         }
     }
