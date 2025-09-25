@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.redisson.api.RLock;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -33,26 +34,29 @@ public class RedisLockAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         RedisLock lockAnnotation = method.getAnnotation(RedisLock.class);
-        // 调用 parseKey
         String key = parseKey(lockAnnotation.value(), joinPoint.getArgs(), signature);
-        boolean locked = false;
+
+        RLock rLock=null;
         try {
-            // 2. 尝试获取锁，非阻塞
-            if(lockAnnotation.block()){
-                redisLock.lock(key,lockAnnotation.timeout(), lockAnnotation.timeUnit());
-            }else {
-                redisLock.tryLock(key,lockAnnotation.timeout(), lockAnnotation.timeUnit(), lockAnnotation.message());
+            if (lockAnnotation.block()) {
+                //阻塞
+                rLock=redisLock.lock(key, lockAnnotation.timeout(), lockAnnotation.timeUnit());
+            } else {
+                //非阻塞
+                rLock=redisLock.tryLock(key, lockAnnotation.timeout(), lockAnnotation.timeUnit(), lockAnnotation.message());
             }
-            locked = true;
-            // 3. 执行目标方法
             return joinPoint.proceed();
         } finally {
-            // 4. 如果当前线程持有锁，则释放
-            if(locked){
-                redisLock.releaseLock(key);
+            if (rLock!=null) {
+                try {
+                    redisLock.releaseLock(rLock);
+                } catch (Exception e) {
+                    log.error("释放锁失败: {}", key, e);
+                }
             }
         }
     }
+
 
     /**
      * 解析注解中的 key

@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
@@ -102,22 +103,21 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(value = "ss",timeout = 20,timeUnit= TimeUnit.SECONDS,message = "请稍后")
+    @RedisLock(value = "ss",block = true,timeout = 5,timeUnit= TimeUnit.SECONDS,message = "请稍后")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
-        ThreadUtil.sleep(10000);
+        //ThreadUtil.sleep(10000);
        // redisLock.releaseLock("ss");
         return "s1";
     }
 
     @Operation(summary = "锁2")
     @GetMapping("/s2")
-    @RedisLock("ss")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        //redisLock.tryLock("ss");
-        ThreadUtil.sleep(1000);
-       // redisLock.releaseLock("ss");
+        RLock rLock= redisLock.tryLock("ss",1000,TimeUnit.SECONDS,"操作过快");
+        ThreadUtil.sleep(10000);
+        redisLock.releaseLock(rLock);
         return "s2";
     }
 

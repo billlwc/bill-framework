@@ -1,6 +1,7 @@
 package bill.framework.redis.lock;
 import bill.framework.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -30,32 +31,17 @@ public class RedisLockUtil {
 
     private final RedissonClient redisson;
 
-    /**
-     * 构建分布式锁的 key
-     * @param key 原始锁名
-     * @return 带前缀的锁名
-     */
-    public String getKey(String key) {
-        return "lock:" + key;
-    }
+    private static final String LOCK_NAME = "lock:";
+
     /**
      * 获取 RLock 对象，可手动操作锁
      * @param lockName 锁名
      * @return RLock 对象
      */
-    public RLock getLock(String lockName) {
-        return redisson.getLock(getKey(lockName));
+    private RLock getLock(String lockName) {
+        return redisson.getLock(LOCK_NAME+lockName);
     }
 
-    /**
-     * 判断锁是否被占用
-     * @param lockName 锁名
-     * @return true 表示锁已被占用，false 表示未被占用
-     */
-    public boolean isLock(String lockName) {
-        RLock rLock = getLock(getKey(lockName));
-        return rLock.isLocked();
-    }
 
     /**
      * 尝试加锁，带自定义超时时间（非阻塞线程）
@@ -64,65 +50,43 @@ public class RedisLockUtil {
      * @param timeout 超时时间
      * @param timeUnit 时间单位
      */
-    public void tryLock(String key, long timeout, TimeUnit timeUnit,String msg) {
+    @SneakyThrows
+    public RLock tryLock(String key, long timeout, TimeUnit timeUnit, String errorMsg) {
         RLock rLock = getLock(key);
-        try {
-            if(!rLock.tryLock(0, timeout, timeUnit)){
-                throw new BusinessException(msg);
-            }else {
-                log.info("加锁成功: {} ", key);
-            }
-        } catch (InterruptedException e) {
-            throw new BusinessException("加锁失败:"+key);
+        if (!rLock.tryLock(0, timeout, timeUnit)) {
+            throw new BusinessException(errorMsg); // 失败直接抛异常
         }
+        log.info("加锁成功: {}", key);
+        return rLock;
     }
-
-    /**
-     * 尝试加锁，带自定义超时时间（非阻塞线程）
-     * @param key 锁名
-     */
-    public void tryLock(String key){
-        tryLock(key,10,TimeUnit.SECONDS,"系统繁忙，请稍后再试");
-    }
-
 
     /**
      * 尝试加锁，带自定义超时时间（阻塞线程）
      *
      * @param key 锁名
      * @param timeout 超时时间
-     * @param timeUnit 时间单位
+     * @param unit 时间单位
      */
-    public void lock(String key, long timeout, TimeUnit timeUnit) {
-        // 获取 RLock 对象
+    @SneakyThrows
+    public RLock lock(String key, long timeout, TimeUnit unit) {
         RLock rLock = getLock(key);
-        // 加锁并设置自动释放时间，防止死锁
-        rLock.lock(timeout, timeUnit);
-        log.info("加锁成功: {} ", key);
-    }
-
-    /**
-     * 尝试加锁，使用默认超时时间 10 秒
-     *
-     * @param key 锁名
-
-     */
-    public void lock(String key) {
-         lock(key, 10, TimeUnit.SECONDS);
+        boolean success = rLock.tryLock(timeout, timeout, unit);
+        if (!success) {
+            throw new RuntimeException("获取锁超时: "+timeout+"_"+unit.name()+":" + key);
+        }
+        log.info("加锁成功: {}", key);
+        return rLock;
     }
 
     /**
      * 释放锁
      *
-     * @param key 锁名
+     * @param rLock 锁名
      */
-    public void releaseLock(String key) {
-        //获取所对象
-        RLock rLock = getLock(key);
-        // 判断当前线程是否持有锁
+    public void releaseLock(RLock rLock) {
         if (rLock.isHeldByCurrentThread()) {
             rLock.unlock();
-            log.info("解锁成功 {}, by {}", key, Thread.currentThread().getName());
+            log.info("解锁成功！ {}", Thread.currentThread().getName());
         }
     }
 }
