@@ -72,7 +72,7 @@ public class RedisLockUtil {
         RLock rLock = getLock(key);
         boolean success = rLock.tryLock(timeout, timeout, unit);
         if (!success) {
-            throw new RuntimeException("获取锁超时: "+timeout+"_"+unit.name()+":" + key);
+            throw new RuntimeException(key+":锁超时: "+timeout+"_"+unit.name());
         }
         log.info("加锁成功: {}", key);
         return rLock;
@@ -86,7 +86,7 @@ public class RedisLockUtil {
     public void releaseLock(RLock rLock) {
         if (rLock.isHeldByCurrentThread()) {
             rLock.unlock();
-            log.info("解锁成功！ {}", Thread.currentThread().getName());
+            log.info("解锁成功！");
         }
     }
 }
