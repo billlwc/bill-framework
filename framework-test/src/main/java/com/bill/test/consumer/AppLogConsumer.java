@@ -24,13 +24,13 @@ public class AppLogConsumer implements LogConsumer {
     public void requestLog(RequestLogInfo requestLog) {
         MDC.put("traceId", requestLog.getTraceId());
         // 可以选择写日志
-        log.info("【{}】-【{}】-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), requestLog);
+        log.info("[{}]-[{}]-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), requestLog);
     }
 
     @Override
     @Async
     public void methodLog(MethodLogInfo methodLog) {
         MDC.put("traceId", methodLog.getTraceId());
-        log.info("【{}】-【{}】-耗时：{}ms：{}",methodLog.getTitle(),methodLog.getMessage(),methodLog.getDurationMs(), methodLog);
+        log.info("[{}]-[{}]-耗时：{}ms：{}",methodLog.getTitle(),methodLog.getMessage(),methodLog.getDurationMs(), methodLog);
     }
 }
