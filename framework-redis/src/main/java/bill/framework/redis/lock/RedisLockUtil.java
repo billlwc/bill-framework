@@ -44,35 +44,19 @@ public class RedisLockUtil {
 
 
     /**
-     * 尝试加锁，带自定义超时时间（非阻塞线程）
+     * 尝试加锁，带自定义超时时间
      *
      * @param key 锁名
+     * @param black 是否阻塞
      * @param timeout 超时时间
      * @param timeUnit 时间单位
+     * @param errorMsg 加锁失败异常信息
      */
     @SneakyThrows
-    public RLock tryLock(String key, long timeout, TimeUnit timeUnit, String errorMsg) {
+    public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String errorMsg) {
         RLock rLock = getLock(key);
-        if (!rLock.tryLock(0, timeout, timeUnit)) {
+        if (!rLock.tryLock(black?timeout:0, timeout, timeUnit)) {
             throw new BusinessException(errorMsg); // 失败直接抛异常
-        }
-        log.info("加锁成功: {}", key);
-        return rLock;
-    }
-
-    /**
-     * 尝试加锁，带自定义超时时间（阻塞线程）
-     *
-     * @param key 锁名
-     * @param timeout 超时时间
-     * @param unit 时间单位
-     */
-    @SneakyThrows
-    public RLock lock(String key, long timeout, TimeUnit unit) {
-        RLock rLock = getLock(key);
-        boolean success = rLock.tryLock(timeout, timeout, unit);
-        if (!success) {
-            throw new RuntimeException(key+":锁超时: "+timeout+"_"+unit.name());
         }
         log.info("加锁成功: {}", key);
         return rLock;

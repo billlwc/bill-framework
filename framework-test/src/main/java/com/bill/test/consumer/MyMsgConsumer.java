@@ -4,7 +4,7 @@ import bill.framework.redis.message.RedisMsgConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Slf4j
 public class MyMsgConsumer implements RedisMsgConsumer {
     @Override

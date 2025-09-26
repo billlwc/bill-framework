@@ -2,6 +2,8 @@ package bill.framework.reply;
 
 
 import bill.framework.enums.ResponseCode;
+import bill.framework.message.MessageSourceService;
+import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,9 +26,11 @@ public class Result implements Serializable {
 
     public Result(Object data){
         this.code = ResponseCode.SUCCESS.getCode();
-        this.msg = ResponseCode.SUCCESS.getMsg();
+        this.msg = SpringUtil.getBean(MessageSourceService.class).getMessage(ResponseCode.SUCCESS.getMsg(), null);
         this.data = data;
     }
+
+
 
     public Result(String code,String msg){
         this.code = code;

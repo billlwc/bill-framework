@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RedisLock {
+public @interface RedisTryLock {
 
     /**
      * 锁的 key，支持 SpEL 表达式，例如：
@@ -22,14 +22,16 @@ public @interface RedisLock {
     String value() default "";
 
     /**
+     * 是否阻塞，默认false
+     */
+    boolean block() default false;
+
+
+    /**
      * 锁超时时间，默认 10 秒
      */
     long timeout() default 10;
 
-    /**
-     * 是否阻塞，默认false
-     */
-    boolean block() default false;
 
     /**
      * 时间单位，默认秒
@@ -39,5 +41,5 @@ public @interface RedisLock {
     /**
      * 获取锁失败时的提示信息
      */
-    String message() default "系统繁忙，请稍后再试";
+    String errorMsg() default "system is busy.";
 }

@@ -27,7 +27,7 @@ import java.util.Objects;
 @SuppressWarnings("NullableProblems")
 @Slf4j
 @Configuration
-@ComponentScan("bill.framework.web")
+@ComponentScan("bill.framework")
 public class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
 
     @Bean

@@ -1,12 +1,13 @@
 package com.bill.test.controller;
 
 import bill.framework.redis.RedisUtil;
-import bill.framework.redis.lock.RedisLock;
+import bill.framework.redis.lock.RedisTryLock;
 import bill.framework.redis.lock.RedisLockUtil;
 import bill.framework.thread.ExecutorsMdcVirtual;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
+import bill.framework.web.exception.ExceptionUtil;
 import bill.framework.web.log.MethodLog;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -103,7 +104,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(value = "ss",block = true,timeout = 5,timeUnit= TimeUnit.SECONDS,message = "请稍后")
+    @RedisTryLock(value = "ss",block = true,timeout = 5,timeUnit= TimeUnit.SECONDS,errorMsg = "请稍后")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
         //ThreadUtil.sleep(10000);
@@ -115,7 +116,7 @@ public class IndexController {
     @GetMapping("/s2")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        RLock rLock= redisLock.tryLock("ss",1000,TimeUnit.SECONDS,"操作过快");
+        RLock rLock= redisLock.tryLock("ss",false,1000,TimeUnit.SECONDS,"操作过快");
         ThreadUtil.sleep(10000);
         redisLock.releaseLock(rLock);
         return "s2";
@@ -175,6 +176,13 @@ public class IndexController {
         redisUtil.publishMessage("MyMsg",jsonObject);
     }
 
+
+    @Operation(summary = "异常消息")
+    @GetMapping("/error/{str}")
+    @NoToken
+    public String error(@PathVariable String str) {
+        return str;
+    }
 
 
 
