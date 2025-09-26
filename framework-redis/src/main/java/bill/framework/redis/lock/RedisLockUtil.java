@@ -8,6 +8,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 
@@ -54,10 +55,20 @@ public class RedisLockUtil {
      * @param errorMsg 加锁失败异常信息
      */
     @SneakyThrows
-    public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String errorMsg) {
+    public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String ... errorMsg) {
         RLock rLock = getLock(key);
         if (!rLock.tryLock(black?timeout:0, timeout, timeUnit)) {
-            throw new BusinessException(ResponseCode.SYSTEM_BUSY,errorMsg); // 失败直接抛异常
+            String msg=ResponseCode.SYSTEM_BUSY.getMsg();
+            String[] args = new String[0]; // 默认空数组
+
+            if (errorMsg.length > 0) {
+                msg = errorMsg[0]; // 第一个作为 msg
+                if (errorMsg.length > 1) {
+                    // 剩下的元素作为 args
+                    args = Arrays.copyOfRange(errorMsg, 1, errorMsg.length);
+                }
+            }
+            throw new BusinessException(ResponseCode.SYSTEM_BUSY,msg,args); // 失败直接抛异常
         }
         log.info("加锁成功: {}", key);
         return rLock;

@@ -1,5 +1,7 @@
 package bill.framework.redis.lock;
 
+import bill.framework.enums.ResponseCode;
+
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
@@ -41,5 +43,5 @@ public @interface RedisTryLock {
     /**
      * 获取锁失败时的提示信息
      */
-    String errorMsg() default "system is busy.";
+    String errorMsg() default "sys_system_busy";
 }

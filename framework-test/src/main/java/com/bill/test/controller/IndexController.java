@@ -1,6 +1,7 @@
 package com.bill.test.controller;
 
 import bill.framework.enums.ResponseCode;
+import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisTryLock;
 import bill.framework.redis.lock.RedisLockUtil;
@@ -106,10 +107,10 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisTryLock(value = "ss",block = true,timeout = 5,timeUnit= TimeUnit.SECONDS,errorMsg = "请稍后")
+    @RedisTryLock(value = "ss")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
-        //ThreadUtil.sleep(10000);
+        ThreadUtil.sleep(10000);
        // redisLock.releaseLock("ss");
         return "s1";
     }
@@ -118,8 +119,8 @@ public class IndexController {
     @GetMapping("/s2")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        RLock rLock= redisLock.tryLock("ss",false,1000,TimeUnit.SECONDS,"操作过快");
-        ThreadUtil.sleep(10000);
+        RLock rLock= redisLock.tryLock("ss",false,1000,TimeUnit.SECONDS,"msg.my_info","哈哈哈");
+        ThreadUtil.sleep(1000);
         redisLock.releaseLock(rLock);
         return "s2";
     }
@@ -186,8 +187,8 @@ public class IndexController {
         String configValue= """
                 {"min":0,"max":200000}
                 """;
-
-        return str;
+        throw new BusinessException("msg.my_info",new Object[]{"哈哈哈"});
+       // return str;
     }
 
 
