@@ -43,6 +43,11 @@ public class BusinessException extends RuntimeException {
         this(ResponseCode.BUSINESS_ERROR.getCode(), messageKey, ResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
     }
 
+    /** 构造函数：使用 ResponseCode 枚举，带占位符参数 args */
+    public BusinessException(String messageKey, Object[] args) {
+        this(ResponseCode.BUSINESS_ERROR.getCode(), messageKey, ResponseCode.BUSINESS_ERROR.getHttpStatus(), args);
+    }
+
     /** 构造函数：使用 ResponseCode 枚举，默认不带占位符参数 */
     public BusinessException(ResponseCode statusEnum) {
         this(statusEnum.getCode(), statusEnum.getMsg(), statusEnum.getHttpStatus(), null);

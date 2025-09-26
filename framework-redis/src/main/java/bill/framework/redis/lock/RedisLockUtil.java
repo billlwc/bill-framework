@@ -1,4 +1,5 @@
 package bill.framework.redis.lock;
+import bill.framework.enums.ResponseCode;
 import bill.framework.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -56,7 +57,7 @@ public class RedisLockUtil {
     public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String errorMsg) {
         RLock rLock = getLock(key);
         if (!rLock.tryLock(black?timeout:0, timeout, timeUnit)) {
-            throw new BusinessException(errorMsg); // 失败直接抛异常
+            throw new BusinessException(ResponseCode.SYSTEM_BUSY,errorMsg); // 失败直接抛异常
         }
         log.info("加锁成功: {}", key);
         return rLock;

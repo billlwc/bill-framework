@@ -45,12 +45,14 @@ public class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
 
                     @Override
                     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-                        HandlerMethod handlerMethod=(HandlerMethod)handler;
-                        Method method=handlerMethod.getMethod();
-                        if (method.isAnnotationPresent(NoToken.class)) {
-                            return true;
+                        if (handler instanceof HandlerMethod handlerMethod) {
+                            Method method = handlerMethod.getMethod();
+                            if (method.isAnnotationPresent(NoToken.class)) {
+                                return true;
+                            }
+                            StpUtil.checkLogin(); // 执行登录检查
                         }
-                        StpUtil.checkLogin();
+                        // 非 HandlerMethod（静态资源等）直接放行
                         return true;
                     }
 

@@ -10,7 +10,6 @@ import cn.hutool.json.JSONUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -46,7 +45,7 @@ public class BaseExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Result> handleBusinessException(BusinessException e, HttpServletRequest request) {
-        log.error("【业务异常】path={}, params={}, error={}",
+        log.warn("【业务异常】path={}, params={}, error={}",
                 request.getRequestURI(),
                 JSONUtil.toJsonStr(request.getParameterMap()),
                 e.getMessage());
@@ -69,7 +68,7 @@ public class BaseExceptionHandler {
                 errorMsg);
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(ResponseCode.BAD_REQUEST.getHttpStatus())
                 .body(new Result(ResponseCode.BAD_REQUEST.getCode(),
                         getMessage(ResponseCode.BAD_REQUEST.getMsg(), new Object[]{errorMsg})));
     }
@@ -84,7 +83,7 @@ public class BaseExceptionHandler {
                 JSONUtil.toJsonStr(request.getParameterMap()));
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(ResponseCode.NOT_FOUND.getHttpStatus())
                 .body(new Result(ResponseCode.NOT_FOUND.getCode(),
                         getMessage(ResponseCode.NOT_FOUND.getMsg(), new Object[]{request.getRequestURI()})));
     }
@@ -96,7 +95,7 @@ public class BaseExceptionHandler {
     public ResponseEntity<Result> handleNotLoginException(NotLoginException e) {
         log.warn("【认证异常】{}", e.getMessage());
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
+                .status(ResponseCode.UNAUTHORIZED.getHttpStatus())
                 .body(new Result(ResponseCode.UNAUTHORIZED.getCode(),
                         getMessage(ResponseCode.UNAUTHORIZED.getMsg(), null)));
     }
@@ -134,8 +133,8 @@ public class BaseExceptionHandler {
                 e);
 
         return ResponseEntity
-                .status(ResponseCode.ERROR_SYSTEM.getHttpStatus())
-                .body(new Result(ResponseCode.ERROR_SYSTEM.getCode(),
-                        getMessage(ResponseCode.ERROR_SYSTEM.getMsg(), null)));
+                .status(ResponseCode.SYSTEM_ERROR.getHttpStatus())
+                .body(new Result(ResponseCode.SYSTEM_ERROR.getCode(),
+                        getMessage(ResponseCode.SYSTEM_ERROR.getMsg(), null)));
     }
 }

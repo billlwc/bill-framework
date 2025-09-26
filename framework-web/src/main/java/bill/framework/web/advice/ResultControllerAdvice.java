@@ -45,7 +45,7 @@ public class ResultControllerAdvice implements ResponseBodyAdvice<Object> {
         if(data instanceof String str){
             // 这里假设 data 是国际化 key
             String message = messageService.getMessage(str, null);
-            return new Result(message);
+            return JSONUtil.toJsonStr(new Result(message));
         }
 
         return new Result(data);

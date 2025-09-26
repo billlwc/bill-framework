@@ -1,5 +1,6 @@
 package com.bill.test.controller;
 
+import bill.framework.enums.ResponseCode;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisTryLock;
 import bill.framework.redis.lock.RedisLockUtil;
@@ -12,6 +13,7 @@ import bill.framework.web.log.MethodLog;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -181,6 +183,10 @@ public class IndexController {
     @GetMapping("/error/{str}")
     @NoToken
     public String error(@PathVariable String str) {
+        String configValue= """
+                {"min":0,"max":200000}
+                """;
+
         return str;
     }
 
