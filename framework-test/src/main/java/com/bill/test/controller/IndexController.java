@@ -1,20 +1,17 @@
 package com.bill.test.controller;
 
-import bill.framework.enums.ResponseCode;
 import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
-import bill.framework.redis.lock.RedisTryLock;
 import bill.framework.redis.lock.RedisLockUtil;
+import bill.framework.redis.lock.RedisLock;
 import bill.framework.thread.ExecutorsMdcVirtual;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
-import bill.framework.web.exception.ExceptionUtil;
 import bill.framework.web.log.MethodLog;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -107,7 +104,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisTryLock(value = "ss")
+    @RedisLock(value = "ss")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
         ThreadUtil.sleep(10000);

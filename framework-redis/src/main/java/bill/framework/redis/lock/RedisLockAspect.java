@@ -29,11 +29,11 @@ public class RedisLockAspect {
     /**
      * 环绕通知：方法执行前加锁，执行完成释放锁
      */
-    @Around("@annotation(bill.framework.redis.lock.RedisTryLock)")
+    @Around("@annotation(bill.framework.redis.lock.RedisLock)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        RedisTryLock tryLock = method.getAnnotation(RedisTryLock.class);
+        RedisLock tryLock = method.getAnnotation(RedisLock.class);
         String key = parseKey(tryLock.value(), joinPoint.getArgs(), signature);
         RLock rLock=null;
         try {
