@@ -1,5 +1,6 @@
 package com.bill.test.controller;
 
+import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisLock;
@@ -17,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.bill.test.entity.SysConfig;
+import com.bill.test.execption.BizException;
 import com.bill.test.service.SysConfigService;
 import com.bill.test.service.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -186,9 +188,10 @@ public class IndexController {
         String configValue= """
                 {"min":0,"max":200000}
                 """;
-        ExceptionUtil.exception(true,MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
-        throw new BusinessException(MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
-
+       // ExceptionUtil.exception(true,MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
+       // throw new BusinessException(MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
+        //int f=1/0;
+        throw new BizException(SysResponseCode.SYSTEM_ERROR.getCode(),"我的异常",500,new Object[]{""});
        // return str;
     }
 
