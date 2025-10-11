@@ -1,6 +1,7 @@
 package bill.framework.web.exception;
 
 import bill.framework.enums.ResponseCode;
+import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +14,11 @@ public class ExceptionUtil {
             throw new BusinessException(responseCode);
         }
     }
+    public static void exception(boolean b, ResponseCode responseCode, String ... msg) {
+        if (b) {
+            throw new BusinessException(responseCode,msg);
+        }
+    }
 
     public static void exception(boolean b, String msg) {
         if (b) {
@@ -20,7 +26,7 @@ public class ExceptionUtil {
         }
     }
 
-    public static void isNull(Object object,ResponseCode responseCode) {
+    public static void isNull(Object object, ResponseCode responseCode) {
         exception(object == null, responseCode);
     }
 

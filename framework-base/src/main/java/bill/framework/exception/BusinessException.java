@@ -1,6 +1,7 @@
 package bill.framework.exception;
 
 import bill.framework.enums.ResponseCode;
+import bill.framework.enums.SysResponseCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -29,23 +30,23 @@ public class BusinessException extends RuntimeException {
 
     /** 构造函数：自定义 code、messageKey，默认 HTTP 1000 */
     public BusinessException(String code, String messageKey) {
-        this(code, messageKey, ResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
+        this(code, messageKey, SysResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
     }
 
     /** 构造函数：自定义 code、messageKey 和 cause，默认 HTTP 1000 */
     public BusinessException(String code, String messageKey, Throwable cause) {
-        this(code, messageKey, ResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
+        this(code, messageKey, SysResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
         log.error(messageKey, cause);
     }
 
     /** 构造函数：仅 messageKey，默认 code 和 HTTP 1000 */
     public BusinessException(String messageKey) {
-        this(ResponseCode.BUSINESS_ERROR.getCode(), messageKey, ResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
+        this(SysResponseCode.BUSINESS_ERROR.getCode(), messageKey, SysResponseCode.BUSINESS_ERROR.getHttpStatus(), null);
     }
 
     /** 构造函数：使用 ResponseCode 枚举，带占位符参数 args */
     public BusinessException(String messageKey, Object[] args) {
-        this(ResponseCode.BUSINESS_ERROR.getCode(), messageKey, ResponseCode.BUSINESS_ERROR.getHttpStatus(), args);
+        this(SysResponseCode.BUSINESS_ERROR.getCode(), messageKey, SysResponseCode.BUSINESS_ERROR.getHttpStatus(), args);
     }
 
     /** 构造函数：使用 ResponseCode 枚举，默认不带占位符参数 */

@@ -1,7 +1,7 @@
 package bill.framework.web.exception;
 
 
-import bill.framework.enums.ResponseCode;
+import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import bill.framework.message.MessageSourceService;
 import bill.framework.reply.Result;
@@ -68,9 +68,9 @@ public class BaseExceptionHandler {
                 errorMsg);
 
         return ResponseEntity
-                .status(ResponseCode.BAD_REQUEST.getHttpStatus())
-                .body(new Result(ResponseCode.BAD_REQUEST.getCode(),
-                        getMessage(ResponseCode.BAD_REQUEST.getMsg(), new Object[]{errorMsg})));
+                .status(SysResponseCode.BAD_REQUEST.getHttpStatus())
+                .body(new Result(SysResponseCode.BAD_REQUEST.getCode(),
+                        getMessage(SysResponseCode.BAD_REQUEST.getMsg(), new Object[]{errorMsg})));
     }
 
     /**
@@ -83,9 +83,9 @@ public class BaseExceptionHandler {
                 JSONUtil.toJsonStr(request.getParameterMap()));
 
         return ResponseEntity
-                .status(ResponseCode.NOT_FOUND.getHttpStatus())
-                .body(new Result(ResponseCode.NOT_FOUND.getCode(),
-                        getMessage(ResponseCode.NOT_FOUND.getMsg(), new Object[]{request.getRequestURI()})));
+                .status(SysResponseCode.NOT_FOUND.getHttpStatus())
+                .body(new Result(SysResponseCode.NOT_FOUND.getCode(),
+                        getMessage(SysResponseCode.NOT_FOUND.getMsg(), new Object[]{request.getRequestURI()})));
     }
 
     /**
@@ -95,9 +95,9 @@ public class BaseExceptionHandler {
     public ResponseEntity<Result> handleNotLoginException(NotLoginException e) {
         log.warn("【认证异常】{}", e.getMessage());
         return ResponseEntity
-                .status(ResponseCode.UNAUTHORIZED.getHttpStatus())
-                .body(new Result(ResponseCode.UNAUTHORIZED.getCode(),
-                        getMessage(ResponseCode.UNAUTHORIZED.getMsg(), null)));
+                .status(SysResponseCode.UNAUTHORIZED.getHttpStatus())
+                .body(new Result(SysResponseCode.UNAUTHORIZED.getCode(),
+                        getMessage(SysResponseCode.UNAUTHORIZED.getMsg(), null)));
     }
 
     /**
@@ -117,9 +117,9 @@ public class BaseExceptionHandler {
                 e.getMessage(),e);
 
         return ResponseEntity
-                .status(ResponseCode.BAD_REQUEST.getHttpStatus())
-                .body(new Result(ResponseCode.BAD_REQUEST.getCode(),
-                        getMessage(ResponseCode.BAD_REQUEST.getMsg(), new Object[]{e.getMessage()})));
+                .status(SysResponseCode.BAD_REQUEST.getHttpStatus())
+                .body(new Result(SysResponseCode.BAD_REQUEST.getCode(),
+                        getMessage(SysResponseCode.BAD_REQUEST.getMsg(), new Object[]{e.getMessage()})));
     }
 
     /**
@@ -133,8 +133,8 @@ public class BaseExceptionHandler {
                 e);
 
         return ResponseEntity
-                .status(ResponseCode.SYSTEM_ERROR.getHttpStatus())
-                .body(new Result(ResponseCode.SYSTEM_ERROR.getCode(),
-                        getMessage(ResponseCode.SYSTEM_ERROR.getMsg(), null)));
+                .status(SysResponseCode.SYSTEM_ERROR.getHttpStatus())
+                .body(new Result(SysResponseCode.SYSTEM_ERROR.getCode(),
+                        getMessage(SysResponseCode.SYSTEM_ERROR.getMsg(), null)));
     }
 }

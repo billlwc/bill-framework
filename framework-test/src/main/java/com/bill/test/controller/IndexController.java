@@ -8,9 +8,11 @@ import bill.framework.thread.ExecutorsMdcVirtual;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
+import bill.framework.web.exception.ExceptionUtil;
 import bill.framework.web.log.MethodLog;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,6 +21,7 @@ import com.bill.test.entity.SysConfig;
 import com.bill.test.service.SysConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jodd.util.ArraysUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -184,10 +187,11 @@ public class IndexController {
         String configValue= """
                 {"min":0,"max":200000}
                 """;
-        throw new BusinessException("msg.my_info",new Object[]{"哈哈哈"});
+        ExceptionUtil.exception(true,MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
+        throw new BusinessException(MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
+
        // return str;
     }
-
 
 
 }

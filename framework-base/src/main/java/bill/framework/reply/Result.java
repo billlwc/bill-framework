@@ -1,7 +1,7 @@
 package bill.framework.reply;
 
 
-import bill.framework.enums.ResponseCode;
+import bill.framework.enums.SysResponseCode;
 import bill.framework.message.MessageSourceService;
 import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,8 +25,8 @@ public class Result implements Serializable {
     private String traceId;
 
     public Result(Object data){
-        this.code = ResponseCode.SUCCESS.getCode();
-        this.msg = SpringUtil.getBean(MessageSourceService.class).getMessage(ResponseCode.SUCCESS.getMsg(), null);
+        this.code = SysResponseCode.SUCCESS.getCode();
+        this.msg = SpringUtil.getBean(MessageSourceService.class).getMessage(SysResponseCode.SUCCESS.getMsg(), null);
         this.data = data;
     }
 
