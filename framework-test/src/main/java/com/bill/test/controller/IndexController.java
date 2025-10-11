@@ -190,7 +190,7 @@ public class IndexController {
                 """;
        // ExceptionUtil.exception(true,MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
        // throw new BusinessException(MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
-        //int f=1/0;
+        int f=1/0;
         throw new BizException(SysResponseCode.SYSTEM_ERROR.getCode(),"我的异常",500,new Object[]{""});
        // return str;
     }

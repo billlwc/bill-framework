@@ -20,4 +20,5 @@ public class BusinessExceptionHandler {
                 .status(SysResponseCode.NOT_FOUND.getHttpStatus())
                 .body(new Result(SysResponseCode.SYSTEM_ERROR.getCode(), e.getMessage()));
     }
+
 }
