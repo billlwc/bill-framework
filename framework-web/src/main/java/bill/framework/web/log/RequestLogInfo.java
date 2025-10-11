@@ -1,5 +1,7 @@
 package bill.framework.web.log;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import lombok.*;
 
 import java.io.Serial;
@@ -10,7 +12,6 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class RequestLogInfo implements Serializable {
 
     @Serial
@@ -34,6 +35,9 @@ public class RequestLogInfo implements Serializable {
     /** 请求路径 */
     private String path;
 
+    /** 请求header（JSON 字符串） */
+    private String header;
+
     /** 请求表单参数（JSON 字符串） */
     private String formParams;
 
@@ -54,4 +58,9 @@ public class RequestLogInfo implements Serializable {
 
     /** 可选：TraceId 或唯一标识 */
     private String traceId;
+
+    @Override
+    public String toString() {
+        return JSONUtil.toJsonStr(this);
+    }
 }

@@ -1,14 +1,12 @@
-package com.bill.test.service;
+package bill.framework.web.util;
 
 import cn.dev33.satoken.stp.StpUtil;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 
 import java.math.BigInteger;
 import java.util.Enumeration;
@@ -38,6 +36,28 @@ public class UserUtils {
             return servletAttrs.getResponse();
         }
         return null;
+    }
+
+    /**
+     * 获取全部请求头（Header）
+     *
+     * @return Map<String, String> 全部 header
+     */
+    public static  Map<String, String> getAllHeaders() {
+        HttpServletRequest request=getRequest();
+        Map<String, String> headers = new LinkedHashMap<>();
+        if (request == null) {
+            return headers;
+        }
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            headers.put(name, value);
+        }
+
+        return headers;
     }
 
     /**
@@ -79,8 +99,8 @@ public class UserUtils {
     /**
      * 获取客户端完整信息（包含 IP、User-Agent、语言等）
      */
-    public static Map<String, String> getClientInfo() {
-        Map<String, String> info = new LinkedHashMap<>();
+    public static Map<String, Object> getClientInfo() {
+        Map<String, Object> info = new LinkedHashMap<>();
         HttpServletRequest request=getRequest();
         if (request == null) {
             info.put("error", "Request is null");
@@ -90,10 +110,7 @@ public class UserUtils {
         info.put("method", request.getMethod());
         info.put("protocol", request.getProtocol());
         info.put("scheme", request.getScheme());
-        info.put("host", request.getHeader("Host"));
-        info.put("userAgent", request.getHeader("User-Agent"));
-        info.put("referer", request.getHeader("Referer"));
-        info.put("acceptLanguage", request.getHeader("Accept-Language"));
+        info.put("headers", getAllHeaders());
         info.put("contentType", request.getContentType());
         info.put("uri", request.getRequestURI());
         info.put("queryString", request.getQueryString());
@@ -110,13 +127,13 @@ public class UserUtils {
         return info;
     }
 
-
-    public static String login(BigInteger id,Object vo) {
+    public static void login(BigInteger id,Object vo) {
         StpUtil.login(id);
         if(vo!=null){
             setSession(vo);
         }
-        return StpUtil.getTokenValue();
+        getResponse().addHeader("Access-Control-Expose-Headers", StpUtil.getTokenName());
+        getResponse().addHeader(StpUtil.getTokenName(), StpUtil.getTokenValue());
     }
 
     public static BigInteger userId() {

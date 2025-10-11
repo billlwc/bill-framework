@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -18,7 +19,7 @@ import java.util.concurrent.*;
 @NoArgsConstructor
 @Service
 public class UserInfo implements Serializable {
-    private Integer id;
+    private BigInteger id;
     private String username;
     private String password;
 

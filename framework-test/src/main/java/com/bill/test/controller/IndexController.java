@@ -2,8 +2,8 @@ package com.bill.test.controller;
 
 import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
-import bill.framework.redis.lock.RedisLockUtil;
 import bill.framework.redis.lock.RedisLock;
+import bill.framework.redis.lock.RedisLockUtil;
 import bill.framework.thread.ExecutorsMdcVirtual;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
@@ -12,13 +12,13 @@ import bill.framework.web.exception.ExceptionUtil;
 import bill.framework.web.log.MethodLog;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.bill.test.entity.SysConfig;
 import com.bill.test.service.SysConfigService;
+import com.bill.test.service.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jodd.util.ArraysUtil;
@@ -52,15 +52,14 @@ public class IndexController {
     @PostMapping("/login")
     @NoToken
     public String index(@RequestBody UserInfo userInfo) {
-        StpUtil.login(userInfo.getId());
-        StpUtil.getSession().set("info", userInfo);
-        return StpUtil.getTokenValue();
+        return UserUtils.login(userInfo.getId(),userInfo);
     }
 
     @Operation(summary = "信息")
     @GetMapping("/info/{id}")
+    @Cacheable(value = "info:#60") //缓存
     public UserInfo info(@PathVariable String id) {
-        UserInfo userInfo= (UserInfo) StpUtil.getSession().get("info");
+        UserInfo userInfo= (UserInfo) UserUtils.getSession();
         log.info("userInfo:{}", userInfo);
         return userInfo;
     }
@@ -75,7 +74,7 @@ public class IndexController {
     @Operation(summary = "分页")
     @GetMapping("/list")
     @NoToken
-    @Cacheable(value = "list:#2") //缓存
+    @Cacheable(value = "list:#5") //缓存
     @MethodLog(title = "测试日志",message = "我的日志")
     public IPage<SysConfig> list(@ParameterObject RequestPageBO bo) {
         LambdaQueryWrapper queryWrapper= Wrappers.<SysConfig>lambdaQuery()
@@ -107,7 +106,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(value = "ss")
+    @RedisLock(value = "'ss:'+#userInfo.getId()")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
         ThreadUtil.sleep(10000);
@@ -119,8 +118,8 @@ public class IndexController {
     @GetMapping("/s2")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        RLock rLock= redisLock.tryLock("ss",false,1000,TimeUnit.SECONDS,"msg.my_info","哈哈哈");
-        ThreadUtil.sleep(1000);
+        RLock rLock= redisLock.tryLock("ss:1",true,10000,TimeUnit.SECONDS);
+        ThreadUtil.sleep(10000);
         redisLock.releaseLock(rLock);
         return "s2";
     }

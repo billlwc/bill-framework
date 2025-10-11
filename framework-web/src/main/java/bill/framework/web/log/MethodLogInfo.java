@@ -1,5 +1,6 @@
 package bill.framework.web.log;
 
+import cn.hutool.json.JSONUtil;
 import lombok.*;
 
 import java.io.Serial;
@@ -10,7 +11,6 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class MethodLogInfo implements Serializable {
 
     @Serial
@@ -48,4 +48,9 @@ public class MethodLogInfo implements Serializable {
 
     /** 应用名称 */
     private String message;
+
+    @Override
+    public String toString() {
+        return JSONUtil.toJsonStr(this);
+    }
 }

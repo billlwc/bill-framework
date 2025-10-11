@@ -20,6 +20,9 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 @Component
@@ -65,6 +68,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             String host = request.getServerName();
             String method = request.getMethod();
 
+            Map<String, String> header = getAllHeaders(request);
+            String headerStr = JSONUtil.toJsonStr(header);
+
             // ========== 2. 获取表单参数 ==========
             String formParams = JSONUtil.toJsonStr(request.getParameterMap());
 
@@ -84,6 +90,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                     .host(host)
                     .httpMethod(method)
                     .path(path)
+                    .header(headerStr)
                     .formParams(formParams)
                     .body(body)
                     .response(responseJson)
@@ -101,5 +108,27 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         } finally {
             MDC.remove("traceId");
         }
+    }
+
+    /**
+     * 获取全部请求头（Header）
+     *
+     * @param request HttpServletRequest
+     * @return Map<String, String> 全部 header
+     */
+    public  Map<String, String> getAllHeaders(HttpServletRequest request) {
+        Map<String, String> headers = new LinkedHashMap<>();
+        if (request == null) {
+            return headers;
+        }
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            headers.put(name, value);
+        }
+
+        return headers;
     }
 }
