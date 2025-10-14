@@ -33,7 +33,6 @@ public class SwaggerConfig {
                 .setAllowRawInjectionDespiteWrapping(true);
     }
 
-
     /**
      * API 文档信息
      */

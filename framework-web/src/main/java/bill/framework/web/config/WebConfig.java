@@ -1,26 +1,31 @@
 package bill.framework.web.config;
 
+
 import bill.framework.web.annotation.NoToken;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.MDC;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -28,21 +33,10 @@ import java.util.Objects;
 @Slf4j
 @Configuration
 @ComponentScan("bill.framework")
-public abstract class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
-
-    protected abstract void setInterceptors(InterceptorRegistry registry);
-
-    @Bean
-    public Snowflake snowflake() {
-        // 生成随机 workerId 和 datacenterId（0~31）
-        long workerId = RandomUtil.randomInt(0, 31);
-        long datacenterId = RandomUtil.randomInt(0, 31);
-        log.info("Initialization Snowflake datacenterId:{} workerId:{}", datacenterId, workerId);
-        return IdUtil.getSnowflake(workerId, datacenterId);
-    }
+public abstract class WebConfig extends MvcConfig implements ApplicationRunner {
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry)  {
+    protected void setInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {
 
                     @Override
@@ -65,6 +59,7 @@ public abstract class WebConfig  implements WebMvcConfigurer, ApplicationRunner 
                         MDC.clear();
                     }
                 })
+                .order(Ordered.HIGHEST_PRECEDENCE) // Base 拦截器先
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/favicon.ico",
@@ -75,7 +70,15 @@ public abstract class WebConfig  implements WebMvcConfigurer, ApplicationRunner 
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/doc.html");
-                setInterceptors(registry);
+    }
+
+    @Bean
+    public Snowflake snowflake() {
+        // 生成随机 workerId 和 datacenterId（0~31）
+        long workerId = RandomUtil.randomInt(0, 31);
+        long datacenterId = RandomUtil.randomInt(0, 31);
+        log.info("Initialization Snowflake datacenterId:{} workerId:{}", datacenterId, workerId);
+        return IdUtil.getSnowflake(workerId, datacenterId);
     }
 
 

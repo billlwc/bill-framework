@@ -18,8 +18,6 @@ import java.util.concurrent.ThreadFactory;
 @Slf4j
 public class AsyncConfig implements AsyncConfigurer {
 
-
-
     @Bean(name = "virtual")
     public Executor getVirtualExecutor() {
         // 使用虚拟线程，并且命名，便于日志和调试
