@@ -28,7 +28,9 @@ import java.util.Objects;
 @Slf4j
 @Configuration
 @ComponentScan("bill.framework")
-public class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
+public abstract class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
+
+    protected abstract void setInterceptors(InterceptorRegistry registry);
 
     @Bean
     public Snowflake snowflake() {
@@ -73,6 +75,7 @@ public class WebConfig  implements WebMvcConfigurer, ApplicationRunner {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/doc.html");
+                setInterceptors(registry);
     }
 
 
