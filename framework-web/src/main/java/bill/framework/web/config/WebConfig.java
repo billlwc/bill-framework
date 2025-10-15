@@ -41,6 +41,10 @@ public abstract class WebConfig extends MvcConfig implements ApplicationRunner {
 
                     @Override
                     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+                        //浏览器预请求
+                        if ("OPTIONS".equals(request.getMethod())) {
+                            return true;
+                        }
                         if (handler instanceof HandlerMethod handlerMethod) {
                             Method method = handlerMethod.getMethod();
                             if (method.isAnnotationPresent(NoToken.class)) {
