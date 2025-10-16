@@ -3,6 +3,9 @@ package bill.framework.redis.config;
 import bill.framework.redis.cache.RedisCacheManagers;
 import bill.framework.redis.message.RedisMsgConsumer;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBlockingQueue;
@@ -22,7 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.BufferedReader;
@@ -48,43 +51,34 @@ public class RedisConfig implements ApplicationRunner {
      * @param factory factory
      * @return RedisTemplate
      */
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
-        // key 使用字符串序列化
+        // key 序列化使用字符串
         StringRedisSerializer stringSerializer = new StringRedisSerializer();
         template.setKeySerializer(stringSerializer);
         template.setHashKeySerializer(stringSerializer);
 
-        // value 使用 Hutool JSON 序列化
-        RedisSerializer<Object> valueSerializer = new RedisSerializer<>() {
-            @Override
-            public byte[] serialize(Object value) {
-                if (value == null) {
-                    return new byte[0];
-                }
-                // 使用 Hutool JSON 序列化对象为字节数组
-                return JSONUtil.toJsonStr(value).getBytes();
-            }
-
-            @Override
-            public Object deserialize(byte[] bytes) {
-                if (bytes == null || bytes.length == 0) {
-                    return null;
-                }
-                // 反序列化成 String，再用 JSONUtil 转对象，需要在使用时手动转换类型
-                return new String(bytes);
-            }
-        };
-
-        template.setValueSerializer(valueSerializer);
-        template.setHashValueSerializer(valueSerializer);
+        // 创建 ObjectMapper 并配置类型信息
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
+        // value 序列化使用 Jackson2JsonRedisSerializer，构造时直接传入 ObjectMapper
+        Jackson2JsonRedisSerializer<Object> jacksonSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+        template.setValueSerializer(jacksonSerializer);
+        template.setHashValueSerializer(jacksonSerializer);
 
         template.afterPropertiesSet();
         return template;
     }
+
 
     /**
      * 缓存管理器<br/>

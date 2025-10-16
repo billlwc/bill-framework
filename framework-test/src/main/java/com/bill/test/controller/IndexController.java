@@ -1,7 +1,6 @@
 package com.bill.test.controller;
 
 import bill.framework.enums.SysResponseCode;
-import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisLock;
 import bill.framework.redis.lock.RedisLockUtil;
@@ -9,7 +8,6 @@ import bill.framework.thread.ExecutorsMdcVirtual;
 import bill.framework.web.annotation.ApiVersion;
 import bill.framework.web.annotation.NoToken;
 import bill.framework.web.bo.RequestPageBO;
-import bill.framework.web.exception.ExceptionUtil;
 import bill.framework.web.log.MethodLog;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -23,7 +21,6 @@ import com.bill.test.service.SysConfigService;
 import com.bill.test.service.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jodd.util.ArraysUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +59,10 @@ public class IndexController {
     @Cacheable(value = "info:#60") //缓存
     public UserInfo info(@PathVariable String id) {
         UserInfo userInfo= (UserInfo) UserUtils.getSession();
-        log.info("userInfo:{}", userInfo);
+        log.info("userInfo1:{}", userInfo);
+        redisUtil.set("userInfo",userInfo);
+        userInfo= (UserInfo) redisUtil.get("userInfo",userInfo);
+        log.info("userInfo2:{}", userInfo);
         return userInfo;
     }
 

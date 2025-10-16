@@ -87,6 +87,18 @@ public class RedisUtil {
         return key == null ? null : redisTemplates.opsForValue().get(key);
     }
 
+
+    /**
+     * 获取字符串缓存
+     *
+     * @param key 缓存 key
+     * @return 对应的值，若不存在则返回 null
+     */
+    public Object get(String key, Object defaultValue) {
+        Object object= get(key);
+        return object == null ? defaultValue : object;
+    }
+
     /**
      * 设置字符串缓存
      *
