@@ -1,4 +1,5 @@
 package bill.framework.redis.lock;
+
 import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 
@@ -58,17 +58,11 @@ public class RedisLockUtil {
     public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String ... errorMsg) {
         RLock rLock = getLock(key);
         if (!rLock.tryLock(black?timeout:0, timeout, timeUnit)) {
-            String msg= SysResponseCode.SYSTEM_BUSY.getMsg();
-            String[] args = new String[0]; // 默认空数组
-
-            if (errorMsg.length > 0) {
-                msg = errorMsg[0]; // 第一个作为 msg
-                if (errorMsg.length > 1) {
-                    // 剩下的元素作为 args
-                    args = Arrays.copyOfRange(errorMsg, 1, errorMsg.length);
-                }
+            String msg=SysResponseCode.SYSTEM_BUSY.getMsg();
+            if(errorMsg.length>0){
+                msg=errorMsg[0];
             }
-            throw new BusinessException(SysResponseCode.SYSTEM_BUSY,msg,args); // 失败直接抛异常
+            throw new BusinessException(SysResponseCode.SYSTEM_BUSY,msg); // 失败直接抛异常
         }
         log.info("加锁成功: {}", key);
         return rLock;

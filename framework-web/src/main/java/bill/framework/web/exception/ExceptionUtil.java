@@ -14,7 +14,7 @@ public class ExceptionUtil {
             throw new BusinessException(responseCode);
         }
     }
-    public static void exception(boolean b, ResponseCode responseCode, String ... msg) {
+    public static void exception(boolean b, ResponseCode responseCode, String  msg) {
         if (b) {
             throw new BusinessException(responseCode,msg);
         }

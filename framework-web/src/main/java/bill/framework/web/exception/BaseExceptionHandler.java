@@ -50,7 +50,7 @@ public class BaseExceptionHandler {
                 JSONUtil.toJsonStr(request.getParameterMap()),
                 e.getMessage());
 
-        String message = getMessage(e.getMessage(), e.getArgs());
+        String message = getMessage(e.getMessage(), null);
         return ResponseEntity.status(e.getHttpStatus()).body(new Result(e.getCode(), message));
     }
 

@@ -1,6 +1,7 @@
 package com.bill.test.controller;
 
 import bill.framework.enums.SysResponseCode;
+import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
 import bill.framework.redis.lock.RedisLock;
 import bill.framework.redis.lock.RedisLockUtil;
@@ -17,6 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.bill.test.entity.SysConfig;
 import com.bill.test.execption.BizException;
+import com.bill.test.service.AiService;
 import com.bill.test.service.SysConfigService;
 import com.bill.test.service.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +32,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 
@@ -47,6 +51,18 @@ public class IndexController {
 
     private final UserInfo userInfo;
 
+    private final AiService aiService;
+    
+
+
+    @Operation(summary = "ai")
+    @GetMapping("/ai")
+    @NoToken
+    public String question( String question)  {
+       return aiService.askQuestion(question);
+    }
+
+
     @Operation(summary = "登录")
     @PostMapping("/login")
     @NoToken
@@ -57,12 +73,13 @@ public class IndexController {
     @Operation(summary = "信息")
     @GetMapping("/info/{id}")
     @Cacheable(value = "info:#60") //缓存
-    public UserInfo info(@PathVariable String id) {
+    public UserInfo info(@PathVariable String id)  {
         UserInfo userInfo= (UserInfo) UserUtils.getSession();
         log.info("userInfo1:{}", userInfo);
         redisUtil.set("userInfo",userInfo);
         userInfo= (UserInfo) redisUtil.get("userInfo",userInfo);
         log.info("userInfo2:{}", userInfo);
+
         return userInfo;
     }
 
@@ -81,7 +98,11 @@ public class IndexController {
     public IPage<SysConfig> list(@ParameterObject RequestPageBO bo) {
         LambdaQueryWrapper queryWrapper= Wrappers.<SysConfig>lambdaQuery()
                 .eq(bo.getId()!=null,SysConfig::getId,bo.getId());
-         return  sysConfigService.page(bo.getPage(),queryWrapper);
+        return sysConfigService.page(bo.getPage(),queryWrapper);
+    }
+
+    private String execute(SysConfig order) {
+        return order.getConfigValue();
     }
 
     @Operation(summary = "流式查询")
@@ -108,9 +129,10 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(value = "'ss:'+#userInfo.getId()")
+   // @RedisLock(value = "'ss:'+#userInfo.getId()")
     public String s1(@ParameterObject UserInfo userInfo) {
        // redisLock.tryLock("ss");
+        log.info("userInfo:{}", userInfo);
         ThreadUtil.sleep(10000);
        // redisLock.releaseLock("ss");
         return "s1";
@@ -120,8 +142,12 @@ public class IndexController {
     @GetMapping("/s2")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        RLock rLock= redisLock.tryLock("ss:1",true,10000,TimeUnit.SECONDS);
-        ThreadUtil.sleep(10000);
+        RLock rLock= redisLock.tryLock("ss:2",false,10000,TimeUnit.MILLISECONDS);
+
+        if(userInfo.getId().equals(new BigInteger("1"))){
+            throw new BusinessException("锁了");
+        }
+
         redisLock.releaseLock(rLock);
         return "s2";
     }
