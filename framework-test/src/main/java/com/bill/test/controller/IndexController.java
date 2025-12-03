@@ -129,7 +129,7 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-    @RedisLock(value = "'ss:'+#userInfo.getId()")
+    @RedisLock(value = "'ss:'+#userInfo.getId()",msg = "稍等")
     public String s1(@ParameterObject UserInfo userInfo) {
         if(userInfo.getId().equals(new BigInteger("1"))){
             throw new BusinessException("锁了");
@@ -141,7 +141,7 @@ public class IndexController {
     @GetMapping("/s2")
     @NoToken
     public String s2(@ParameterObject UserInfo userInfo) {
-        RLock rLock= redisLock.tryLock("ss:2",false,10000,TimeUnit.MILLISECONDS);
+        RLock rLock= redisLock.tryLock("ss:"+userInfo.getId(),false,10000,TimeUnit.MILLISECONDS);
 
         if(userInfo.getId().equals(new BigInteger("1"))){
             throw new BusinessException("锁了");

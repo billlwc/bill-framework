@@ -2,6 +2,8 @@ package bill.framework.redis.lock;
 
 import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
+import cn.hutool.core.util.StrUtil;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -52,17 +54,17 @@ public class RedisLockUtil {
      * @param black 是否阻塞
      * @param timeout 超时时间
      * @param timeUnit 时间单位
-     * @param errorMsg 加锁失败异常信息
+     * @param msg 加锁失败异常信息
      */
     @SneakyThrows
-    public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String ... errorMsg) {
+    public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String ... msg) {
         RLock rLock = getLock(key);
         if (!rLock.tryLock(black?timeout:0, timeout, timeUnit)) {
-            String msg=SysResponseCode.SYSTEM_BUSY.getMsg();
-            if(errorMsg.length>0){
-                msg=errorMsg[0];
+            String message=SysResponseCode.SYSTEM_BUSY.getMsg();
+            if(msg.length>0&& StrUtil.isNotBlank(msg[0])){
+                message=msg[0];
             }
-            throw new BusinessException(SysResponseCode.SYSTEM_BUSY,msg); // 失败直接抛异常
+            throw new BusinessException(SysResponseCode.SYSTEM_BUSY,message); // 失败直接抛异常
         }
         log.info("加锁成功: {}", key);
         return rLock;

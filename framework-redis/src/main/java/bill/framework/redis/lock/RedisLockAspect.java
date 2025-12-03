@@ -37,7 +37,7 @@ public class RedisLockAspect {
         String key = parseKey(tryLock.value(), joinPoint.getArgs(), signature);
         RLock rLock=null;
         try {
-            rLock=redisLock.tryLock(key,tryLock.block(), tryLock.timeout(), tryLock.timeUnit(), tryLock.errorMsg());
+            rLock=redisLock.tryLock(key,tryLock.block(), tryLock.timeout(), tryLock.timeUnit(), tryLock.msg());
             return joinPoint.proceed();
         } finally {
             if (rLock!=null) {

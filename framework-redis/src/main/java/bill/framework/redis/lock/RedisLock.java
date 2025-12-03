@@ -41,5 +41,5 @@ public @interface RedisLock {
     /**
      * 获取锁失败时的提示信息
      */
-    String errorMsg() default "sys_system_busy";
+    String msg() default "";
 }
