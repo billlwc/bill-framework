@@ -129,12 +129,11 @@ public class IndexController {
     @Operation(summary = "锁1")
     @GetMapping("/s1")
     @NoToken
-   // @RedisLock(value = "'ss:'+#userInfo.getId()")
+    @RedisLock(value = "'ss:'+#userInfo.getId()")
     public String s1(@ParameterObject UserInfo userInfo) {
-       // redisLock.tryLock("ss");
-        log.info("userInfo:{}", userInfo);
-        ThreadUtil.sleep(10000);
-       // redisLock.releaseLock("ss");
+        if(userInfo.getId().equals(new BigInteger("1"))){
+            throw new BusinessException("锁了");
+        }
         return "s1";
     }
 
@@ -217,7 +216,7 @@ public class IndexController {
        // ExceptionUtil.exception(true,MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
        // throw new BusinessException(MyResponseCode.MY_ERROR,ArraysUtil.array("哈哈哈"));
         //int f=1/0;
-        throw new BizException(SysResponseCode.SYSTEM_ERROR.getCode(),"我的异常",500,new Object[]{""});
+        throw new BizException(SysResponseCode.SYSTEM_ERROR.getCode(),"我的异常",500);
        // return str;
     }
 

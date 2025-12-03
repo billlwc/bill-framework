@@ -16,7 +16,7 @@ public class AppLogConsumer implements LogConsumer {
 
     @Override
     public Set<String> excludePaths() {
-        return Set.of("/list","/");
+        return Set.of("/list","/v3/api-docs","/v3/api-docs/swagger-config","/doc.html");
     }
 
     @Override
