@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>JSON Editor</title>
+    <style>
+        body { font-family: "SF Pro", Arial, sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; background: #eef1f5; }
+        #left, #right { flex: 1; padding: 20px; overflow: auto; }
+        #left { background: #ffffff; border-right: 1px solid #d0d4da; box-shadow: inset -1px 0 4px rgba(0,0,0,0.05); }
+        h3 { margin-top: 0; color: #34495e; }
+        textarea { width: 100%; height: 200px; font-size: 14px; font-family: monospace; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #fafafa; }
+        input[type=text] { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; background: #fafafa; }
+        button { background: #3b82f6; color: white; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 8px; }
+        button:hover { background: #1d4ed8; }
+        #treeContainer ul { list-style-type: none; padding-left: 22px; }
+        .key-node { margin: 3px 0; cursor: pointer; padding: 3px 6px; border-radius: 5px; }
+        .key-node:hover { background: #f0f4ff; }
+        .collapsed > ul { display: none; }
+        .editable { background: #fff8d3; padding: 2px 4px; border-radius: 4px; font-weight: bold; color: #b7791f; }
+        .value-edit { width: 200px; padding: 3px; border-radius: 4px; border: 1px solid #aaa; background: #ffffff; }
+        .toggle-btn { font-weight: bold; margin-right: 6px; cursor: pointer; color: #2563eb; }
+    </style>
+</head>
+<body>
+<div id="left">
+    <h3>JSON 输入</h3>
+    <textarea id="jsonInput">{
+  "regadd": {
+    "country": {
+      "code": "SG",
+      "desc": "SINGAPORE"
+    },
+    "unit": {
+      "value": "02"
+    },
+    "street": {
+      "value": "SENGKANG EAST AVENUE"
+    },
+    "lastupdated": "2025-08-15",
+    "block": {
+      "value": "11"
+    },
+    "source": "1",
+    "postal": {
+      "value": "544804"
+    },
+    "classification": "C",
+    "type": "SG",
+    "floor": {
+      "value": "18"
+    },
+    "building": {
+      "value": ""
+    }
+  },
+  "DATETIME": 1758703999550
+}</textarea>
+
+    <h3>可编辑字段（逗号分隔）</h3>
+    <input id="editableKeys" type="text" value="DATETIME,regadd.block.value" />
+    <br/><br/>
+    <button id="renderBtn">渲染</button>
+    <button id="exportBtn">导出 JSON</button>
+</div>
+
+<div id="right">
+    <h3>结构化 JSON</h3>
+    <div id="treeContainer"></div>
+</div>
+
+<script>
+    let currentObj = {};
+
+    function renderTree() {
+        const jsonText = document.getElementById("jsonInput").value;
+        try { currentObj = JSON.parse(jsonText); } catch (e) { alert("JSON 格式错误！"); return; }
+        const editableKeys = document.getElementById("editableKeys").value.split(',').map(s => s.trim()).filter(s => s);
+        const container = document.getElementById("treeContainer");
+        container.innerHTML = "";
+        const ul = document.createElement("ul");
+        buildNode(currentObj, ul, "", editableKeys);
+        container.appendChild(ul);
+        collapseAllExceptEditable();
+    }
+
+    function buildNode(obj, parent, path, editableKeys) {
+        Object.keys(obj).forEach(key => {
+            const li = document.createElement("li");
+            li.className = "key-node";
+            const currentPath = path ? path + '.' + key : key;
+            li.dataset.path = currentPath;
+            const isObj = typeof obj[key] === 'object' && obj[key] !== null;
+            const editable = editableKeys.includes(currentPath);
+
+            const toggle = document.createElement("span");
+            toggle.className = "toggle-btn";
+            toggle.textContent = isObj ? "▶" : "•";
+            toggle.onclick = (e) => { e.stopPropagation(); li.classList.toggle("collapsed"); };
+            li.appendChild(toggle);
+
+            const keyLabel = document.createElement("span");
+            keyLabel.textContent = key + ": ";
+            if (editable) keyLabel.classList.add("editable");
+            li.appendChild(keyLabel);
+
+            if (isObj) {
+                const childUl = document.createElement("ul");
+                buildNode(obj[key], childUl, currentPath, editableKeys);
+                li.appendChild(childUl);
+            } else {
+                if (editable) {
+                    const input = document.createElement("input");
+                    input.className = "value-edit";
+                    input.value = obj[key];
+                    input.addEventListener('input', () => updateJsonValue(currentPath, input.value));
+                    li.appendChild(input);
+                } else {
+                    const val = document.createElement("span");
+                    val.textContent = obj[key];
+                    li.appendChild(val);
+                }
+            }
+            parent.appendChild(li);
+        });
+    }
+
+    function updateJsonValue(path, newVal) {
+        const keys = path.split('.');
+        let ref = currentObj;
+        for (let i = 0; i < keys.length - 1; i++) ref = ref[keys[i]];
+        ref[keys[keys.length - 1]] = parseValue(newVal);
+        document.getElementById("jsonInput").value = JSON.stringify(currentObj, null, 2);
+    }
+
+    function parseValue(v) {
+        if (v === "true") return true;
+        if (v === "false") return false;
+        if (!isNaN(v) && v !== '') return Number(v);
+        return v;
+    }
+
+    function collapseAllExceptEditable() {
+        const editableKeys = document.getElementById("editableKeys").value.split(',').map(s => s.trim()).filter(s => s);
+        document.querySelectorAll('.key-node').forEach(n => n.classList.add('collapsed'));
+        editableKeys.forEach(path => {
+            let cur = '';
+            path.split('.').forEach(part => {
+                cur = cur ? cur + '.' + part : part;
+                const node = document.querySelector(`[data-path="${cur}"]`);
+                if (node) node.classList.remove('collapsed');
+            });
+        });
+    }
+
+    function exportJson() {
+        try {
+            const jsonStr = JSON.stringify(currentObj, null, 2);
+            alert(jsonStr);
+        } catch (e) {
+            alert('无法导出 JSON');
+        }
+    }
+
+    // 绑定按钮
+    document.getElementById('renderBtn').addEventListener('click', renderTree);
+    document.getElementById('exportBtn').addEventListener('click', exportJson);
+</script>
+</body>
+</html>
