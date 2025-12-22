@@ -16,7 +16,7 @@ public class AppLogConsumer implements LogConsumer {
 
     @Override
     public Set<String> excludePaths() {
-        return Set.of("/list","/v3/api-docs","/v3/api-docs/swagger-config","/doc.html");
+        return Set.of("/list","/v3/api-docs","/v3/api-docs/swagger-config","/doc.html","/favicon.ico");
     }
 
     @Override
@@ -24,13 +24,13 @@ public class AppLogConsumer implements LogConsumer {
     public void requestLog(RequestLogInfo requestLog) {
         MDC.put("traceId", requestLog.getTraceId());
         // 可以选择写日志
-        log.info("[{}]-[{}]-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), requestLog);
+        log.info("【{}】-【{}】-耗时：{}ms：{}",requestLog.getHttpMethod(),requestLog.getPath(),requestLog.getDurationMs(), requestLog);
     }
 
     @Override
     @Async
     public void methodLog(MethodLogInfo methodLog) {
         MDC.put("traceId", methodLog.getTraceId());
-        log.info("[{}]-[{}]-耗时：{}ms：{}",methodLog.getTitle(),methodLog.getMessage(),methodLog.getDurationMs(), methodLog);
+        log.info("【{}】-耗时：{}ms：{}",methodLog.getTitle(),methodLog.getDurationMs(), methodLog);
     }
 }
