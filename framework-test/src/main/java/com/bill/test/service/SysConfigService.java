@@ -40,7 +40,7 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
     }
 
 
-    @MethodLog(title = "测试一下",message = "哈哈哈哈")
+    @MethodLog("哈哈哈哈")
     public String test(String string) {
         return "这是测试数据";
     }

@@ -62,7 +62,7 @@ public class MethodLogAspect {
             }
             if (logConsumer != null) {
                 MethodLogInfo methodLog = MethodLogInfo.builder()
-                        .title(methodLogAnno.title())
+                        .title(methodLogAnno.value())
                         .message(methodLogAnno.message())
                         .appName(appName)
                         .path(path)

@@ -94,7 +94,7 @@ public class IndexController {
     @GetMapping("/list")
     @NoToken
     @Cacheable(value = "list:#5") //缓存
-    @MethodLog(title = "测试日志",message = "我的日志")
+    @MethodLog(value = "测试日志",message = "我的日志")
     public IPage<SysConfig> list(@ParameterObject RequestPageBO bo) {
         LambdaQueryWrapper queryWrapper= Wrappers.<SysConfig>lambdaQuery()
                 .eq(bo.getId()!=null,SysConfig::getId,bo.getId());
@@ -156,7 +156,7 @@ public class IndexController {
     @GetMapping("/test")
     //@Cacheable(value = "test:#60",key ="#sysConfig.id" ) //缓存
     @NoToken
-    @MethodLog(title = "123",message = "123")
+    @MethodLog("123")
     public String test(@ParameterObject SysConfig sysConfig) throws ExecutionException, InterruptedException {
        // return sysConfigService.getOne(Wrappers.<SysConfig>lambdaQuery().le(SysConfig::getId,2).last("order by create_time desc limit 1"));
         String configValue= """
