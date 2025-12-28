@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>API Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f7f8fa;
+            --panel: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --primary: #2563eb;
+            --code-bg: #0f172a;
+            --code-text: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左侧导航 */
+        nav {
+            width: 260px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 24px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        nav h1 {
+            font-size: 18px;
+            margin-bottom: 24px;
+        }
+
+        nav a {
+            display: block;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* 内容区 */
+        main {
+            flex: 1;
+            padding: 48px 64px;
+            max-width: 1000px;
+        }
+
+        section {
+            margin-bottom: 64px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            color: var(--muted);
+            max-width: 720px;
+        }
+
+        /* 接口卡片 */
+        .api {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .api-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .method {
+            font-weight: 600;
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-right: 12px;
+            color: white;
+        }
+
+        .get { background: #16a34a; }
+        .post { background: #2563eb; }
+        .put { background: #ca8a04; }
+        .delete { background: #dc2626; }
+
+        .path {
+            font-family: monospace;
+            font-size: 15px;
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+
+        /* 代码块 */
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+    <nav>
+        <h1>My API 2.0</h1>
+        <a href="#intro">简介</a>
+        <a href="#auth">认证方式</a>
+        <a href="#user">用户接口</a>
+    </nav>
+
+    <main>
+        <section id="intro">
+            <h2>API 简介</h2>
+            <p>这是一个示例 API 文档，适合对外提供服务的接口说明。</p>
+        </section>
+
+        <section id="auth">
+            <h2>认证方式</h2>
+            <pre>Authorization: Bearer YOUR_TOKEN</pre>
+        </section>
+
+        <section id="user">
+            <h2>用户接口</h2>
+
+            <div class="api">
+                <div class="api-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/users/{id}</span>
+                </div>
+                <p>根据用户 ID 获取用户信息</p>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>参数</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>String</td>
+                        <td>是</td>
+                        <td>用户 ID</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <pre>{
+  "id": "123",
+  "name": "Tom",
+  "email": "tom@example.com"
+}</pre>
+            </div>
+        </section>
+    </main>
+</div>
+
+</body>
+</html>
