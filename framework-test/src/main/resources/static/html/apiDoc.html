@@ -2,10 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
-    <title>API Documentation</title>
+    <title>My API 2.0 Documentation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- 字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
@@ -16,20 +15,25 @@
             --muted: #6b7280;
             --border: #e5e7eb;
             --primary: #2563eb;
-            --code-bg: #0f172a;
+            --code-bg: #0b1220;
             --code-text: #e5e7eb;
+
+            --info-bg: #f1f5ff;
+            --info-border: #2563eb;
+
+            --warn-bg: #fff7ed;
+            --warn-border: #f59e0b;
+            --warn-text: #92400e;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
         .layout {
@@ -42,7 +46,7 @@
             width: 260px;
             background: var(--panel);
             border-right: 1px solid var(--border);
-            padding: 24px 20px;
+            padding: 28px 22px;
             position: sticky;
             top: 0;
             height: 100vh;
@@ -50,60 +54,148 @@
 
         nav h1 {
             font-size: 18px;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         nav a {
             display: block;
             color: var(--muted);
             text-decoration: none;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             font-size: 14px;
+            padding-left: 8px;
+            border-left: 2px solid transparent;
         }
 
         nav a:hover {
             color: var(--primary);
         }
 
+        nav a.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* 二级菜单 */
+        .nav-sub {
+            margin: 6px 0 14px 0;
+            padding-left: 14px;
+            border-left: 1px dashed var(--border);
+        }
+
+        .nav-sub a {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .nav-sub a::before {
+            content: "•";
+            margin-right: 6px;
+            color: #9ca3af;
+        }
+
+        .nav-sub a:hover {
+            color: var(--primary);
+        }
+
         /* 内容区 */
         main {
             flex: 1;
-            padding: 48px 64px;
-            max-width: 1000px;
+            padding: 56px 72px;
+            max-width: 1100px;
         }
 
         section {
-            margin-bottom: 64px;
+            margin-bottom: 80px;
         }
 
         h2 {
-            font-size: 28px;
-            margin-bottom: 12px;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        h2::after {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            margin-top: 10px;
+            border-radius: 2px;
         }
 
         p {
             color: var(--muted);
-            max-width: 720px;
+            max-width: 800px;
+            margin: 10px 0;
+        }
+
+        strong {
+            color: var(--text);
+        }
+
+        a.link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a.link:hover {
+            text-decoration: underline;
+        }
+
+        /* 信息块 */
+        .note {
+            background: var(--info-bg);
+            border-left: 4px solid var(--info-border);
+            padding: 16px 18px;
+            margin: 22px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1e3a8a;
+        }
+
+        .warning {
+            background: var(--warn-bg);
+            border-left: 4px solid var(--warn-border);
+            padding: 16px 18px;
+            margin: 22px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--warn-text);
+        }
+
+        .error {
+            background: #fdecea;        /* 浅红背景 */
+            border-left: 4px solid #e53935; /* 红色边框 */
+            padding: 16px 18px;
+            margin: 22px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #b71c1c;             /* 深红文字 */
         }
 
         /* 接口卡片 */
         .api {
             background: var(--panel);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 24px;
-            margin-top: 24px;
+            border-radius: 14px;
+            padding: 28px;
+            padding-top: 5px;
+            margin-top: 32px;
         }
 
         .api-header {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .method {
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             padding: 4px 10px;
             border-radius: 6px;
             margin-right: 12px;
@@ -116,7 +208,7 @@
         .delete { background: #dc2626; }
 
         .path {
-            font-family: monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 15px;
         }
 
@@ -124,29 +216,67 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
+            margin-top: 18px;
             font-size: 14px;
         }
 
         th, td {
             border: 1px solid var(--border);
-            padding: 10px;
+            padding: 12px;
             text-align: left;
         }
 
         th {
             background: #f9fafb;
+            font-weight: 500;
         }
 
         /* 代码块 */
         pre {
             background: var(--code-bg);
             color: var(--code-text);
-            padding: 16px;
-            border-radius: 10px;
+            padding: 20px;
+            padding-bottom: 5px;
+            border-radius: 12px;
             overflow-x: auto;
             font-size: 13px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 18px;
         }
+        .pres {
+            background: var(--code-bg);
+            color: var(--code-text);
+        }
+         .code-sample {
+             display: flex;
+             align-items: center;
+             gap: 12px;
+             padding: 12px 16px;
+             margin: 10px 0;
+             background: #f8fafc;
+             border: 1px solid #e5e7eb;
+             border-radius: 8px;
+             font-size: 14px;
+         }
+
+        .code-sample .lang {
+            font-weight: 600;
+            color: #1f2937;
+            min-width: 48px;
+        }
+
+        .code-sample a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .code-sample a:hover {
+            text-decoration: underline;
+        }
+
+
     </style>
 </head>
 <body>
@@ -154,58 +284,1261 @@
 <div class="layout">
     <nav>
         <h1>My API 2.0</h1>
-        <a href="#intro">简介</a>
-        <a href="#auth">认证方式</a>
-        <a href="#user">用户接口</a>
+        <a href="#menu_1" class="active">准备工作</a>
+        <a href="#menu_2">概述</a>
+        <a href="#menu_3">公共参数</a>
+        <a href="#menu_4">加密</a>
+        <div class="nav-sub">
+            <a href="#menu_4_1">请求体加密</a>
+            <a href="#menu_4_2">响应体加密</a>
+        </div>
+        <a href="#menu_5">签名</a>
+        <div class="nav-sub">
+            <a href="#menu_5_1">请求体签名</a>
+            <a href="#menu_5_2">响应体签名</a>
+        </div>
+        <a href="#menu_6">PayIn</a>
+        <div class="nav-sub">
+            <a href="#menu_6_1">生成UPI支付链接</a>
+            <a href="#menu_6_2">回调</a>
+            <a href="#menu_6_3">查询状态</a>
+        </div>
+        <a href="#menu_7">PayOut</a>
+        <div class="nav-sub">
+            <a href="#menu_7_1">发起付款</a>
+            <a href="#menu_7_2">回调</a>
+            <a href="#menu_7_3">查询状态</a>
+        </div>
+        <a href="#menu_8">账户查询</a>
+        <a href="#menu_9">代码示例</a>
     </nav>
 
     <main>
-        <section id="intro">
-            <h2>API 简介</h2>
-            <p>这是一个示例 API 文档，适合对外提供服务的接口说明。</p>
+        <section id="menu_1">
+            <h2>准备工作</h2>
+
+            <p>接入方需向我方提供 <strong>AES 密钥</strong> 与 <strong>RSA 密钥</strong>。</p>
+            <p>AES 密钥：用于数据加解密，128 位（Base64 编码）。</p>
+            <p>RSA 密钥（PKCS#8）：用于请求签名验证，2048 位（Base64 编码）。</p>
+
+            <div class="note">
+                可使用以下工具生成密钥（文档末尾 Java 工具类亦提供生成方法）：<br>
+                <a class="link" href="https://www.bejson.com/enc/rsa/" target="_blank">bejson.com</a> ·
+                <a class="link" href="https://www.ol-tools.com/rsa-key-pair-generator" target="_blank">ol-tools</a> ·
+                <a class="link" href="https://www.toolhelper.cn/AsymmetricEncryption/RSA" target="_blank">toolhelper</a> ·
+                <a class="link" href="https://opendocs.alipay.com/isv/03lwrd" target="_blank">Alipay Docs</a>
+            </div>
+
+            <p><strong>我方 RSA 公钥（用于响应验签）：</strong></p>
+
+            <pre>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5v6bAbCEpyvrk0T/Jhnj
+qepjuKgAg40/9cQ1fJMEA0P17Lxa3VG5lCQ/mQECbKDNbq7JSK/zhJvK3obs2YrS
+Z4kEQW5mhQJtbTpdeQQp3Axq03FD/wPiw6hewpV4T7O3D2Zmq4oQxBLk/63JOqRF
+zwYlIZvkEQvWib2qoGBilXZyPdfukhqPyKV5YTKLFIq6wTayhzgXvETcrbfPNidH
+VAe/wtLzzsVB4p6KYLL6AiRW0qW2rm8J2buDazmB3ulWNuT49cFV4F7eIr6WcMgc
+DjllrssvtGMb6BOMt3mTR3uVhjWkrdVGaRmwxv5j1aWLk343uGQ0XNFgmK3RNU6+
+ewIDAQAB</pre>
+
+            <div class="error">
+                <strong>重要安全要求：</strong><br>
+                • 接入方需提供<strong>固定出口 IP</strong>以加强通讯安全。<br>
+                • 接入方需提供 <strong>Payin / Payout 回调地址</strong>用于风控。<br>
+                • 请按配置模板发送至
+                <strong>starplatinum777777777@gmail.com</strong><br>
+                • 抄送 <strong>vme50tokfconthu@gmail.com</strong>。<br>
+                • 邮件标题：<strong>“此处填你的商户名” - API Config</strong>
+            </div>
         </section>
 
-        <section id="auth">
-            <h2>认证方式</h2>
-            <pre>Authorization: Bearer YOUR_TOKEN</pre>
+        <section id="menu_2">
+            <h2>概述</h2>
+
+            <div class="note">
+                我方API全部基于HTTPS协议，接入方需要按照API说明通过POST方法调用。
+                所有API的请求体和响应体都是JSON格式，所有字符都使用UTF-8编码。接入方需要加入请求头Content-Type: application/json。
+                所有API的请求和响应都包含一些公共参数，分别位于请求头和响应头，详见公共参数。
+                所有API的请求和响应都进行了加密和签名，详见加密机制，签名机制。
+            </div>
+
+            <div class="warning">
+                请对响应头的x-code进行判断，等于10000时为请求成功（业务成功需在响应体内判断），
+                否则查看x-msg了解失败原因，请求的错误不会返回响应体，
+                我们的响应体是秘文，如果请求错误，我们无法判断接入方具有解析秘文的能力，
+                所以请在响应头x-msg获取错误信息！！！<br>
+                必须对响应、回调的x-sign进行验签，确定请求是由我们发出无篡改
+            </div>
         </section>
 
-        <section id="user">
-            <h2>用户接口</h2>
 
-            <div class="api">
-                <div class="api-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/api/v1/users/{id}</span>
+        <section id="menu_3">
+            <h2>公共参数</h2>
+
+            <h3>公共请求头</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>说明</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>x-merchant-id</td>
+                    <td>接入方的 merchantId</td>
+                </tr>
+                <tr>
+                    <td>x-request-id</td>
+                    <td>请求 ID，建议使用 UUID</td>
+                </tr>
+                <tr>
+                    <td>x-timestamp</td>
+                    <td>请求时间戳</td>
+                </tr>
+                <tr>
+                    <td>x-version</td>
+                    <td>版本号，固定为 2.0</td>
+                </tr>
+                <tr>
+                    <td>x-sign</td>
+                    <td>RSA 请求签名</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3>公共响应头</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>说明</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>x-merchant-id</td>
+                    <td>请求头原路返回</td>
+                </tr>
+                <tr>
+                    <td>x-request-id</td>
+                    <td>请求头原路返回</td>
+                </tr>
+                <tr>
+                    <td>x-timestamp</td>
+                    <td>响应时间戳</td>
+                </tr>
+                <tr>
+                    <td>x-version</td>
+                    <td>固定为 2.0</td>
+                </tr>
+                <tr>
+                    <td>x-sign</td>
+                    <td>RSA 响应签名</td>
+                </tr>
+                <tr>
+                    <td>x-code</td>
+                    <td>响应码</td>
+                </tr>
+                <tr>
+                    <td>x-msg</td>
+                    <td>响应消息</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="menu_4">
+            <h2>加密</h2>
+
+            <div class="note">
+                为保证数据的安全性，我方会对每个请求和响应进行加密。<br>
+                接入方与我方需使用 <strong>AES/GCM/NoPadding</strong> 对请求体和响应体进行加密与解密，
+                加密结果统一采用 <strong>Base64</strong> 编码。<br>
+                接入方需提前提供 <strong>128 位 AES 密钥（Base64 编码）</strong>，详见「准备工作」。
+            </div>
+
+            <div class="error">
+                <strong>⚠ GCM 模式重要说明</strong><br>
+                • GCM 认证标签长度：<strong>128 位</strong><br>
+                • 随机初始向量（IV）：<strong>12 字节</strong><br>
+                • 加密后需将 <strong>IV + 密文</strong> 合并：<br>
+                &nbsp;&nbsp;payload 前 12 字节为随机 IV，后续为密文
+            </div>
+
+            <!-- 请求体 -->
+            <section id="menu_4_1">
+                <h3>请求体加密</h3>
+
+                <p>
+                    原始请求体字段含义详见各 API 说明。
+                </p>
+
+                <p><strong>接入方处理流程：</strong></p>
+                <ol>
+                    <li>使用 AES 密钥对原始请求体进行加密</li>
+                    <li>将加密结果进行 Base64 编码</li>
+                    <li>编码后的字符串作为 <code>payload</code> 字段发送</li>
+                </ol>
+
+                <p><strong>我方处理流程：</strong></p>
+                <ol>
+                    <li>对 <code>payload</code> 进行 Base64 解码</li>
+                    <li>使用 AES 密钥进行解密</li>
+                    <li>得到原始请求体</li>
+                </ol>
+
+                <p><strong>原始请求体示例：</strong></p>
+                <pre>{
+    "key_1": "value_1",
+    "key_2": "value_2",
+    "key_3": "value_3"
+}</pre>
+
+                <p><strong>实际请求体示例：</strong></p>
+                <pre>{
+    "payload": "8YryQ8hYkTL3UzzEdvlUGGrL...9lvPN+U0iERGz9wpHtxvA=="
+}</pre>
+            </section>
+
+            <!-- 响应体 -->
+            <section id="menu_4_2">
+                <h3>响应体加密</h3>
+
+                <p>
+                    原始响应体字段含义详见各 API 说明。
+                </p>
+
+                <p><strong>我方处理流程：</strong></p>
+                <ol>
+                    <li>对原始响应体进行 AES 加密</li>
+                    <li>对加密结果进行 Base64 编码</li>
+                    <li>编码后的字符串作为 <code>payload</code> 返回</li>
+                </ol>
+
+                <p><strong>接入方处理流程：</strong></p>
+                <ol>
+                    <li>对 <code>payload</code> 进行 Base64 解码</li>
+                    <li>使用 AES 密钥进行解密</li>
+                    <li>得到原始响应体</li>
+                </ol>
+
+                <p><strong>原始响应体示例：</strong></p>
+                <pre>{
+    "key_1": "value_1",
+    "key_2": "value_2",
+    "key_3": "value_3"
+}</pre>
+
+                                <p><strong>实际响应体示例：</strong></p>
+                <pre>{
+    "payload": "8YryQ8hYkTL3UzzEdvlUGGrL...9lvPN+U0iERGz9wpHtxvA=="
+}</pre>
+                            </section>
+        </section>
+
+        <section id="menu_5">
+            <h2>签名</h2>
+
+            <div class="note">
+                为保证API的安全调用，我方会对每个请求和响应通过签名进行身份验证。
+                接入方与我方需使用签名算法SHA256withRSA，对请求待签字符串和响应待签字符串进行签名，签名结果采用Base64 编码，对应请求头和响应头的x-sign字段。
+                接入方请在准备工作查看我方的2048位RSA公钥T（Base64 编码格式），同时我方需要接入方提前提供2048位RSA公钥U（Base64 编码格式），参考准备工作。
+                整个请求与响应流程涉及2对RSA密钥：属于我方的公钥T与私钥T，属于接入方的公钥U与私钥U。公钥用于验证签名，私钥用于生成签名。
+            </div>
+            <section id="menu_5_1">
+                <h3>请求待签字符串</h3>
+                <div >
+                    所有字段按如下顺序依次使用｜符号连接。</br>
+                   <p class="pres">merchantId|version|requestId|timestamp|payload</p>
+                    merchantId、version、requestId和timestamp来自请求头中对应字段。</br>
+                    payload来自实际请求体中payload字段。</br>
+                    特别注意：payload全程只进行一次加密，他应该作为参数传进签名方法，不要在签名里再重新加密一次！！！</br>
+                    接入方：对请求待签字符串先使用私钥U生成签名，再进行Base64编码。结果作为请求头中x-sign字段的值。</br>
+                    我方：对收到的请求头中x-sign字段的值先进行Base64解码，再使用公钥U验证签名。</br>
+
                 </div>
-                <p>根据用户 ID 获取用户信息</p>
+            </section>
 
+            <section id="menu_5_2">
+                <h3>响应待签字符串</h3>
+                <div >
+                    所有字段按如下顺序依次使用｜符号连接。</br>
+                    <p class="pres"> merchantId|version|requestId|timestamp|payload</p>
+                    merchantId、version、requestId和timestamp来自响应头中对应字段。</br>
+                    payload来自实际响应体中payload字段。</br>
+                    特别注意：请先解析响应头的x-code与x-msg确认该请求正确后再解析payload</br>
+                    我方：对响应待签字符串先使用私钥T生成签名，再进行Base64编码。结果作为响应头中x-sign字段的值。</br>
+                    接入方：对收到的响应头中x-sign字段的值先进行Base64解码，再使用公钥T验证签名。</br>
+                </div>
+            </section>
+
+        </section>
+
+        <section id="menu_6">
+        <h2>PayIn</h2>
+        <div class="note">
+            生成UPI支付链接
+            请对查单、回调的退款状态（statusRefund）字段做判断，该字段主要是风控恶意玩家，拒收付款直接走退款流程，所以无论交易状态（tradeStatus）如何，只要statusRefund为true即该笔交易已退还（退还有一定的窗口期并非马上到账）
+        </div>
+        <section id="menu_6_1">
+        <div class="api">
+            <h3>生成UPI支付链接</h3>
+            <div class="api-header">
+                <span class="method post">POST</span>
+                <span class="path">/trade/pay_in</span>
+            </div>
+            <p>Request：</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>字段名</th>
+                    <th>类型</th>
+                    <th>长度 / 格式</th>
+                    <th>必填</th>
+                    <th>说明</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>mchId</td>
+                    <td>String</td>
+                    <td>32</td>
+                    <td>Y</td>
+                    <td>商户 ID</td>
+                </tr>
+                <tr>
+                    <td>outTradeNo</td>
+                    <td>String</td>
+                    <td>100</td>
+                    <td>Y</td>
+                    <td>商户订单号，需保证唯一</td>
+                </tr>
+                <tr>
+                    <td>notifyUrl</td>
+                    <td>String</td>
+                    <td>100</td>
+                    <td>Y</td>
+                    <td>异步回调地址</td>
+                </tr>
+                <tr>
+                    <td>payerIp</td>
+                    <td>String</td>
+                    <td>20</td>
+                    <td>Y</td>
+                    <td>用户真实 IP，需在下单时动态获取</td>
+                </tr>
+                <tr>
+                    <td>userId</td>
+                    <td>String</td>
+                    <td>-</td>
+                    <td>Y</td>
+                    <td>用户唯一标识</td>
+                </tr>
+                <tr>
+                    <td>successfulTopUpTimes</td>
+                    <td>Integer</td>
+                    <td>-</td>
+                    <td>Y</td>
+                    <td>用户历史充值成功的累计次数</td>
+                </tr>
+                <tr>
+                    <td>tradeAmount</td>
+                    <td>Decimal</td>
+                    <td>(8,2)</td>
+                    <td>Y</td>
+                    <td>交易金额</td>
+                </tr>
+                <tr>
+                    <td>phoneNumber</td>
+                    <td>String</td>
+                    <td>-</td>
+                    <td>Y</td>
+                    <td>用户手机号</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>String</td>
+                    <td>-</td>
+                    <td>Y</td>
+                    <td>用户邮箱</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p>Body:</p>
+            <pre>{
+    "mchId": "20221010100015",
+    "notifyUrl": "http://localhost/in/resp",
+    "outTradeNo": "9abe9cbfda7348728cb2364e6c4c9b40",
+    "payerIp": "127.0.0.1",
+    "userId": "10001"
+    "successfulTopUpTimes": 0
+    "phoneNumber": 91223211223,
+    "email": "sample@gmail.com",
+    "tradeAmount": 1
+}
+            </pre>
+
+            <p>Response：</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>字段名</th>
+                    <th>说明</th>
+                    <th>长度</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>mchId</td>
+                    <td>商户 ID</td>
+                    <td>32</td>
+                </tr>
+                <tr>
+                    <td>outTradeNo</td>
+                    <td>商户单号</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>tradeId</td>
+                    <td>交易 ID</td>
+                    <td>32</td>
+                </tr>
+                <tr>
+                    <td>tradeLink</td>
+                    <td>平台支付网页链接（使用此链接作为付款链接）</td>
+                    <td>255</td>
+                </tr>
+                </tbody>
+            </table>
+            <table>
+                <thead>
+                <tr>
+                    <th>Response Code</th>
+                    <th>说明</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1044</td>
+                    <td>上游没有返回 UPI 链接</td>
+                </tr>
+                <tr>
+                    <td>1042</td>
+                    <td>如果您的手机或邮箱被列入黑名单，请更换手机或邮箱</td>
+                </tr>
+                <tr>
+                    <td>2005</td>
+                    <td>请求上游错误</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p>Body:</p>
+            <pre>{
+    "code": "10000",
+    "currentTime": "1676442883367",
+    "data": {
+    "code": "10000",
+    "mchId": "20221010100015",
+    "msg": "The operation succeeded",
+    "outTradeNo": "48fd8714bb5e453b9027d2d516a5fe88",
+    "tradeId": "2023021510000003",
+    "tradeLink": "https://localhost/trade/link?payNo=20250001"
+    },
+    "msg": "The operation succeeded"
+}
+            </pre>
+
+        </div>
+        </section>
+        <section id="menu_6_2">
+            <h3>回调</h3>
+            <div class="note">
+                我方将以POST请求您在下单中传递的回调地址（notifyUrl），请对回调请求进行验签，通知会重复，请做好重复判断，对通知响应字符串（直接返回无需加密和签名）：SUCCESS，表示不再通知，如出现异常通知，如查不到单，或者有异议请回复：WRONG
+            </div>
+            <p>Response：</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>字段名</th>
+                    <th>说明</th>
+                    <th>长度 / 类型</th>
+                    <th>备注</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>tradeAmount</td>
+                    <td>交易金额</td>
+                    <td>(8,2)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>mchId</td>
+                    <td>商户 ID</td>
+                    <td>32</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>outTradeNo</td>
+                    <td>商户单号</td>
+                    <td>100</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>tradeId</td>
+                    <td>交易 ID</td>
+                    <td>32</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>tradeStatus</td>
+                    <td>交易状态</td>
+                    <td>32</td>
+                    <td>
+                        CREATE：创建付款链接<br>
+                        TIMEOUT：超时<br>
+                        FAIL：支付失败<br>
+                        SUCCESS：支付成功
+                    </td>
+                </tr>
+                <tr>
+                    <td>statusRefund</td>
+                    <td>
+                        收到用户付款后，款项被退还给用户的状态；<br>
+                        无论交易状态（tradeStatus）如何，该款项可能并未到账，而是被直接退回
+                    </td>
+                    <td>boolean</td>
+                    <td>true / false</td>
+                </tr>
+                <tr>
+                    <td>utr</td>
+                    <td>UTR</td>
+                    <td>32</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>refundMessage</td>
+                    <td>退款原因</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p>Body:</p>
+            <pre>{
+     "mchId": "20221010100015",
+     "nonceStr": "1at0gfk809lukc4tcq7ccn8px0lgs1du",
+     "accountAmount": 1,
+     "outTradeNo": "48fd8714bb5e453b9027d2d516a5fe88",
+     "sign": "27a54fe2cd22dc6183a5c322190564ab",
+     "timestamp": 1676443961,
+     "tradeAmount": 1,
+     "tradeId": "2023021510000003",
+     "tradeStatus": "SUCCESS",
+     "statusRefund": false,
+     "utr": "5500003",
+     "refundMessage": ""
+}
+            </pre>
+        </section>
+        <section id="menu_6_3">
+            <div class="api">
+                <h3>查询状态</h3>
+                <div class="api-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/trade/query/in</span>
+                </div>
+                <p>Request：</p>
                 <table>
                     <thead>
                     <tr>
-                        <th>参数</th>
-                        <th>类型</th>
-                        <th>必填</th>
+                        <th>字段名</th>
                         <th>说明</th>
+                        <th>是否必填</th>
+                        <th>备注</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td>id</td>
-                        <td>String</td>
+                        <td>tradeId</td>
+                        <td>交易 ID</td>
+                        <td>是（二选一）</td>
+                        <td rowspan="2">
+                            <strong>tradeId</strong> 与 <strong>outTradeNo</strong><br>
+                            二选一必须传其中之一
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>outTradeNo</td>
+                        <td>商户单号</td>
+                        <td>是（二选一）</td>
+                    </tr>
+                    <tr>
+                        <td>mchId</td>
+                        <td>商户 ID</td>
                         <td>是</td>
-                        <td>用户 ID</td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>Body:</p>
+                <pre>{
+ "mchId": "20221010100015",
+ "tradeId": "2023021410000003"
+}
+        </pre>
+
+                <p>Response：</p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>说明</th>
+                        <th>类型 / 长度</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>tradeAmount</td>
+                        <td>交易金额</td>
+                        <td>(8,2)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>outTradeNo</td>
+                        <td>商户单号</td>
+                        <td>100</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tradeId</td>
+                        <td>交易 ID</td>
+                        <td>32</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tradeStatus</td>
+                        <td>交易状态</td>
+                        <td>32</td>
+                        <td>
+                            CREATE：创建支付链接<br>
+                            TIMEOUT：超时<br>
+                            FAIL：支付失败<br>
+                            SUCCESS：支付成功
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>statusRefund</td>
+                        <td>
+                            收到用户付款后，款项被退还给用户的状态
+                        </td>
+                        <td>boolean</td>
+                        <td>
+                            true / false<br>
+                            <strong>注意：</strong>无论 tradeStatus 如何，只要为 true，表示款项已退还（可能存在延迟到账）
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>utr</td>
+                        <td>UTR（上游交易流水号）</td>
+                        <td>32</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>refundMessage</td>
+                        <td>退款原因</td>
+                        <td>-</td>
+                        <td>仅在发生退款时返回</td>
                     </tr>
                     </tbody>
                 </table>
 
+
+                <p>Body:</p>
                 <pre>{
-  "id": "123",
-  "name": "Tom",
-  "email": "tom@example.com"
-}</pre>
+     "code": "10000",
+     "currentTime": "1676444797353",
+     "data": {
+       "code": "10000",
+       "createdAt": "2023-02-15 12:04",
+       "currency": "INR",
+       "mchId": "20221010100015",
+       "msg": "The operation succeeded",
+       "outTradeNo": "48fd8714bb5e453b9027d2d516a5fe88",
+       "tradeAmount": 1,
+       "tradeId": "2023021510000003",
+       "tradeStatus": "CREATE",
+       "statusRefund": false,
+       "utr": "5500003",
+       "refundMessage": ""
+     },
+     "msg": "The operation succeeded"
+}
+        </pre>
+
             </div>
         </section>
+    </section>
+    <section id="menu_7">
+        <h2>PayOut</h2>
+        <div class="note">
+            tradeMode仅支持IMPS
+            只有当响应内容的两层代码都等于10000时，订单才被视为提交成功（其他代码可设置为失败）；
+            成功的订单需要根据返回的tradeStatus修改业务状态。<br/>
+            PAY_ING：待处理<br/>
+            PAY：成功<br/>
+            PAY_FAIL：失败<br/>
+        </div>
+        <div class="error">
+            当出现错误代码500或请求超时（此时不会返回订单状态），不可作为失败，请求一旦发出，没有明确收到响应，没有查询到明确状态，都不能视为失败，需要重新查询订单状态，有时可能订单堆积处理中，一时查不到订单信息，持续查，必须查询到具体的订单状态代码作为最终状态。总之就是没有明确告诉你失败了，不要将订单判定为失败，长时间查不到订单，可以找客服确认。我方对此类情况不承担责任
+        </div>
+
+
+        <section id="menu_7_1">
+            <div class="api">
+                <h3>发起付款</h3>
+                <div class="api-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/trade/pay_out</span>
+                </div>
+                <p>Request：</p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>说明</th>
+                        <th>长度 / 类型</th>
+                        <th>是否必须</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>mchId</td>
+                        <td>商户 ID</td>
+                        <td>32</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>outTradeNo</td>
+                        <td>商户单号</td>
+                        <td>100</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>notifyUrl</td>
+                        <td>回调地址</td>
+                        <td>255</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tradeAmount</td>
+                        <td>交易金额</td>
+                        <td>(8,2)</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+
+                    <!-- Users 说明 -->
+                    <tr>
+                        <td colspan="5" style="background:#f6f8fa;font-weight:bold;">
+                            Users（支付账户详情，仅支持一条记录）
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>amount</td>
+                        <td>付款金额</td>
+                        <td>(8,2)</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>userId</td>
+                        <td>用户 ID</td>
+                        <td>-</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>payerIp</td>
+                        <td>用户 IP</td>
+                        <td>20</td>
+                        <td>y</td>
+                        <td>取玩家游戏中下单时的 IP，必须实时动态获取</td>
+                    </tr>
+                    <tr>
+                        <td>bankAccount</td>
+                        <td>收款人的确切姓名</td>
+                        <td>100</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>bankCardNo</td>
+                        <td>UPI 渠道填写 UPI 账号，银行卡渠道填写银行账号</td>
+                        <td>100</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>bankName</td>
+                        <td>银行名称</td>
+                        <td>100</td>
+                        <td>n</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tradeMode</td>
+                        <td>支付方式</td>
+                        <td>10</td>
+                        <td>y</td>
+                        <td>IMPS / UPI（当前仅支持 IMPS）</td>
+                    </tr>
+                    <tr>
+                        <td>bankCode</td>
+                        <td>IFSC 银行代码</td>
+                        <td>50</td>
+                        <td>n</td>
+                        <td>仅银行转账时需要</td>
+                    </tr>
+                    <tr>
+                        <td>mobileNumber</td>
+                        <td>用户手机号码</td>
+                        <td>20</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>email</td>
+                        <td>用户电子邮件</td>
+                        <td>50</td>
+                        <td>y</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>userKey</td>
+                        <td>Detail identification</td>
+                        <td>long</td>
+                        <td>n</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>payTime</td>
+                        <td>支付时间</td>
+                        <td>yyyy-MM-dd HH:mm:ss</td>
+                        <td>n</td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>Body:</p>
+                <pre>{
+     "mchId": "20221010100015",
+     "notifyUrl": "https://pay.rupetech.net/pay/out/resp",
+     "outTradeNo": "529d3845c5f74f3bbc932e96750b87b4",
+     "tradeAmount": 105,
+     "users": [
+       {
+         "userId": "10001",
+         "payerIp": "0.0.0.0",
+         "amount": 105,
+         "bankAccount": "CHAGANTI SURENDER REDDY",
+         "bankCardNo": "50100562054556",
+         "bankCode": "HDFC0001639",
+         "bankName": "HDFC",
+         "email": "kpuppala02@gmail.com",
+         "mobileNumber": "9097634567",
+         "tradeMode": "imps",
+         "userKey": 1
+       }
+     ]
+}
+
+        </pre>
+        <p>Response:</p>
+        <div class="error">只是向银行提交，并不代表支付成功</div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>说明</th>
+                        <th>备注 / 枚举值</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>outTradeNo</td>
+                        <td>商户单号</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tradeId</td>
+                        <td>交易ID</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tradeStatus</td>
+                        <td>交易状态</td>
+                        <td>
+                            TASK：创建支付任务<br>
+                            PAY_ING：已提交至银行<br>
+                            PAY：支付完成<br>
+                            PAY_FAIL：支付失败
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>payType</td>
+                        <td>上游银行</td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>Body:</p>
+                <pre>{
+     "code": "10000",
+     "currentTime": "1676445014225",
+     "data": {
+       "code": "10000",
+       "mchId": "20221010100015",
+       "msg": "The operation succeeded",
+       "outTradeNo": "377c7115f0064756915b6d3fa35e32ba",
+       "tradeId": "2023021510000009",
+       "tradeStatus": "TASK"
+     },
+     "msg": "The operation succeeded"
+}
+
+        </pre>
+
+
+            </div>
+        </section>
+        <section id="menu_7_2">
+            <h3>回调</h3>
+            <div class="note">
+                我方将以POST请求您在下单中传递的回调地址（notifyUrl），请对回调请求进行验签，通知会重复，请做好重复判断，对通知响应字符串（直接返回无需加密和签名）：SUCCESS，表示不再通知，如出现异常通知，如查不到单，或者有异议请回复：WRONG
+            </div>
+            <div class="error">
+                当 reversal = true 时，flowOrderId 和 reversalTime 才会有值。订单状态发生变化，首先会触发回调，可能是成功，也可能是失败；此时，付款已扣款或退款。当再次触发 reversal = true 的回调时，需要执行相反的操作。如果之前成功并扣款，则需要执行退款操作。如果之前失败并退款，则需要重新扣款。
+            </div>
+            <p>Response：</p>
+            <pre>{
+     "accountAmount": 509.5,
+     "mchId": "20221010100015",
+     "outTradeNo": "9f98a38478c54fd4b9741ee03c8f7e7d",
+     "payType": "T",
+     "tradeAmount": 500,
+     "tradeId": "202407101120000675",
+     "tradeStatus": "PAY",
+     "users": [
+       {
+         "accountAmount": 509.5,
+         "bankAccount": "1",
+         "bankCardNo": "116",
+         "bankCode": "3",
+         "bankName": "1",
+         "flowOrderId": 567135485075525,
+         "reversal": true,
+         "reversalTime": "2024-07-24 11:50:05",
+         "status": "PAY",
+         "tradeAmount": 500,
+         "userKey": 1,
+         "payTime": "2025-01-01 00:00:00",
+         "utr": "V2pNo0MEA_"
+       }
+     ]
+}
+
+            </pre>
+        </section>
+        <section id="menu_7_3">
+            <div class="api">
+                <h3>查询状态</h3>
+                <div class="api-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/trade/query/out</span>
+                </div>
+                <p>Request：</p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>说明</th>
+                        <th>是否必填</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>tradeId</td>
+                        <td>交易 ID</td>
+                        <td>是（二选一）</td>
+                        <td rowspan="2">
+                            <strong>tradeId</strong> 与 <strong>outTradeNo</strong><br>
+                            二选一必须传其中之一
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>outTradeNo</td>
+                        <td>商户单号</td>
+                        <td>是（二选一）</td>
+                    </tr>
+                    <tr>
+                        <td>mchId</td>
+                        <td>商户 ID</td>
+                        <td>是</td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>Body:</p>
+                <pre>{
+     "mchId": "20221010100015",
+     "tradeId": "2023021410000003"
+}
+
+        </pre>
+            <p> Response:</p>
+                <table >
+                    <thead>
+                    <tr>
+                        <th>字段名</th>
+                        <th>说明</th>
+                        <th>格式 / 类型</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>accountAmount</td>
+                        <td>账户实际扣款金额</td>
+                        <td>(8,2)</td>
+                    </tr>
+                    <tr>
+                        <td>tradeAmount</td>
+                        <td>交易金额</td>
+                        <td>(8,2)</td>
+                    </tr>
+                    <tr>
+                        <td>payType</td>
+                        <td>上游银行</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>details</td>
+                        <td>付款账户详情</td>
+                        <td>object</td>
+                    </tr>
+                    <tr>
+                        <td>bankAccount</td>
+                        <td>收款人姓名</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>bankCardNo</td>
+                        <td>收款人账号</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>payTime</td>
+                        <td>付款时间</td>
+                        <td>yyyy-MM-dd HH:mm</td>
+                    </tr>
+                    <tr>
+                        <td>tradeMode</td>
+                        <td>upi / imps</td>
+                        <td>string</td>
+                    </tr>
+                    <tr>
+                        <td>userKey</td>
+                        <td>User ID</td>
+                        <td>int</td>
+                    </tr>
+                    <tr>
+                        <td>reversal</td>
+                        <td>是否发生逆转（true 是，false 否）</td>
+                        <td>boolean</td>
+                    </tr>
+                    <tr>
+                        <td>flowOrderId</td>
+                        <td>通过 flowOrderId 可查看扣款、冲销交易记录</td>
+                        <td>int</td>
+                    </tr>
+                    <tr>
+                        <td>reversalTime</td>
+                        <td>逆转发生的时间</td>
+                        <td>yyyy-MM-dd HH:mm:ss</td>
+                    </tr>
+                    <tr>
+                        <td>accountAmount</td>
+                        <td>账户实际扣款金额</td>
+                        <td>(8,2)</td>
+                    </tr>
+                    <tr>
+                        <td>tradeAmount</td>
+                        <td>交易金额</td>
+                        <td>(8,2)</td>
+                    </tr>
+                    <tr>
+                        <td>utr</td>
+                        <td>utr</td>
+                        <td>32</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>Body:</p>
+                <pre>{
+     "code": "10000",
+     "currentTime": "1721810396184",
+     "data": {
+       "accountAmount": 509.50,
+       "code": "10000",
+       "createdAt": "2024-07-10 13:10",
+       "currency": "INR",
+       "details": [
+         {
+           "bankAccount": "1",
+           "bankCardNo": "116",
+           "bankCode": "3",
+           "bankName": "1",
+           "flowOrderId": "567135485075525",
+           "payTime": "2024-07-10 13:10",
+           "rate": 0.00,
+           "reversal": true,
+           "reversalTime": "2024-07-24 11:50:05",
+           "status": "PAY",
+           "tradeAmount": 509.50,
+           "tradeMode": "imps",
+           "userKey": "1",
+           "utr": "V2pNo0MEA_"
+         }
+       ],
+       "msg": "The operation succeeded",
+       "nonceStr": "kjvnrocwyokv9qgea3vuggg0h5ukn8g2",
+       "orderNo": "202407101120000675",
+       "outTradeNo": "9f98a38478c54fd4b9741ee03c8f7e7d",
+       "payStatus": "PAY",
+       "sign": "bf6a7686000d49f57f8fdfd4619d2103",
+       "timestamp": 1721810396,
+       "tradeAmount": 500.00
+     },
+     "msg": "The operation succeeded"
+}
+
+                </pre>
+
+            </div>
+        </section>
+    </section>
+    <section id="menu_8">
+        <div class="api">
+            <h3>查询状态</h3>
+            <div class="api-header">
+                <span class="method post">POST</span>
+                <span class="path">/mch/account</span>
+            </div>
+            <p>Request：</p>
+            <table class="api-table">
+                <thead>
+                <tr>
+                    <th>字段名</th>
+                    <th>说明</th>
+                    <th>备注 / 取值说明</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>accountType</td>
+                    <td>账户类型</td>
+                    <td>
+                        COLLECTION：代收<br>
+                        PAYMENT_ACCOUNT：代付<br>
+                        默认值：COLLECTION
+                    </td>
+                </tr>
+                <tr>
+                    <td>mchId</td>
+                    <td>商户ID</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <p>Body:</p>
+            <pre>{
+     "mchId": "20221010100015",
+     "accountType": "COLLECTION"
+}
+
+            </pre>
+            <p>Response：</p>
+            <table >
+                <thead>
+                <tr>
+                    <th>字段名</th>
+                    <th>说明</th>
+                    <th>长度 / 格式</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>merchantNo</td>
+                    <td>商户ID</td>
+                    <td>32</td>
+                </tr>
+                <tr>
+                    <td>notTradeAmount</td>
+                    <td>不可交易金额</td>
+                    <td>(10,2)</td>
+                </tr>
+                <tr>
+                    <td>tradeAmount</td>
+                    <td>可交易金额</td>
+                    <td>(10,2)</td>
+                </tr>
+                </tbody>
+            </table>
+            <p>Body:</p>
+            <pre>{
+     "code": "10000",
+     "currentTime": "1676891873065",
+     "data": {
+       "code": "10000",
+       "merchantNo": "20221010100015",
+       "msg": "The operation succeeded",
+       "notTradeAmount": 13.26,
+       "totalAmount": 2504.19,
+       "tradeAmount": 2435.85
+     },
+     "msg": "The operation succeeded"
+}
+
+            </pre>
+        </div>
+    </section>
+        <section id="menu_9">
+            <h2>代码示例</h2>
+
+            <div class="code-sample">
+                <span class="lang">Java</span>
+                <a href="https://drive.google.com/drive/folders/1xYZTTa_ad0pxvLrgUBBI5A24SH_5USrM" target="_blank">
+                    查看示例代码
+                </a>
+            </div>
+
+            <div class="code-sample">
+                <span class="lang">PHP</span>
+                <a href="https://drive.google.com/drive/folders/1E5WBnW9iy0iPgekADrspK5GJa-BD4Mv_" target="_blank">
+                    查看示例代码
+                </a>
+            </div>
+        </section>
+
     </main>
 </div>
 
