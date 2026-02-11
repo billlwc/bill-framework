@@ -18,6 +18,9 @@ public class RequestPageBO extends RequestBO{
     @Schema(name="pageSize",description="每页条数",nullable=false)
     private Integer pageSize=10;
 
+    @Schema(name="searchCount",description="是否查总页数",nullable=false)
+    private Boolean searchCount=false;
+
     @Schema(name="sortField",description="排序列名",nullable=false)
     private String sortField;
 
@@ -28,7 +31,7 @@ public class RequestPageBO extends RequestBO{
     private long timestamp=System.currentTimeMillis()/2000;
 
     public Page getPage() {
-       return new Page<>(getPageNum(),getPageSize());
+       return new Page<>(getPageNum(),getPageSize(),getSearchCount());
     }
 
 
