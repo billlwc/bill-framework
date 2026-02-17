@@ -3,6 +3,7 @@ package com.bill.test.controller;
 import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
+import bill.framework.redis.idempotent.Idempotent;
 import bill.framework.redis.limit.RateLimit;
 import bill.framework.redis.limit.RateLimitType;
 import bill.framework.redis.lock.RedisLock;
@@ -444,6 +445,40 @@ public class IndexController {
         log.info("执行任务: {}", taskId);
         ThreadUtil.sleep(3000);
         return "任务 " + taskId + " 执行完成";
+    }
+
+    // ==================== 幂等性示例 ====================
+
+    @Operation(summary = "幂等示例1 - 提交订单（5秒内不能重复提交）")
+    @PostMapping("/idempotent/order")
+    @NoToken
+    @Idempotent(timeout = 5, msg = "订单提交中，请勿重复点击")
+    public String submitOrder(@RequestBody SmsCodeDTO dto) {
+        // 自动根据：IP + 类名:方法名 + 参数MD5 生成幂等key
+        log.info("处理订单: {}", dto);
+        ThreadUtil.sleep(1000); // 模拟业务耗时
+        return "订单提交成功！";
+    }
+
+    @Operation(summary = "幂等示例2 - 支付（自定义key，30秒内同一笔订单不能重复支付）")
+    @PostMapping("/idempotent/pay/{orderId}")
+    @NoToken
+    @Idempotent(key = "'pay:' + #orderId", timeout = 30, msg = "支付处理中，请勿重复提交")
+    public String pay(@PathVariable String orderId) {
+        log.info("处理支付: orderId={}", orderId);
+        ThreadUtil.sleep(2000);
+        return "支付成功！订单号：" + orderId;
+    }
+
+    @Operation(summary = "幂等示例3 - 成功后立即解锁（可重新提交）")
+    @PostMapping("/idempotent/feedback")
+    @NoToken
+    @Idempotent(timeout = 10, deleteOnSuccess = true, msg = "反馈提交中，请稍候")
+    public String submitFeedback(@RequestParam String content) {
+        // deleteOnSuccess=true：执行成功后立即释放key，用户下次可以重新提交
+        // 执行异常时也会自动释放key
+        log.info("提交反馈: {}", content);
+        return "反馈提交成功！";
     }
 
 
