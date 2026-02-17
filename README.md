@@ -184,7 +184,140 @@ throw new BusinessException("user_not_found");  // 使用国际化 key
 // 自动处理返回对应的 HTTP 状态码和错误信息
 ```
 
-### 3. 方法日志记录
+### 3. 参数校验
+
+使用 Jakarta Bean Validation 进行参数校验，支持基础校验、分组校验、嵌套校验和自定义校验注解。
+
+**基础校验**：
+
+```java
+@Data
+public class UserRegisterDTO {
+
+    @NotBlank(message = "用户名不能为空")
+    @Size(min = 3, max = 20, message = "用户名长度必须在 3-20 个字符之间")
+    private String username;
+
+    @NotBlank(message = "密码不能为空")
+    @Size(min = 6, max = 32, message = "密码长度必须在 6-32 个字符之间")
+    private String password;
+
+    @Email(message = "邮箱格式不正确")
+    private String email;
+
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    private String phone;
+
+    @Min(value = 18, message = "年龄必须大于等于 18 岁")
+    @Max(value = 120, message = "年龄必须小于等于 120 岁")
+    private Integer age;
+}
+
+// Controller 中使用 @Valid 触发校验
+@PostMapping("/register")
+public String register(@Valid @RequestBody UserRegisterDTO dto) {
+    return "注册成功";
+}
+```
+
+**分组校验**：
+
+```java
+@Data
+public class UserUpdateDTO {
+
+    // 定义校验分组
+    public interface UpdateBasic {}
+    public interface UpdatePassword {}
+
+    @NotNull(message = "用户ID不能为空", groups = {UpdateBasic.class, UpdatePassword.class})
+    private Long id;
+
+    @NotBlank(message = "用户名不能为空", groups = UpdateBasic.class)
+    private String username;
+
+    @NotBlank(message = "新密码不能为空", groups = UpdatePassword.class)
+    @Size(min = 6, max = 32, groups = UpdatePassword.class)
+    private String newPassword;
+}
+
+// 使用 @Validated 指定校验分组
+@PutMapping("/user/basic")
+public String updateBasic(@Validated(UserUpdateDTO.UpdateBasic.class) @RequestBody UserUpdateDTO dto) {
+    return "更新成功";
+}
+```
+
+**嵌套对象校验**：
+
+```java
+@Data
+public class OrderCreateDTO {
+
+    @NotBlank(message = "收货人不能为空")
+    private String receiverName;
+
+    @NotEmpty(message = "订单商品不能为空")
+    @Valid  // 嵌套校验
+    private List<OrderItemDTO> items;
+
+    @Data
+    public static class OrderItemDTO {
+        @NotNull(message = "商品ID不能为空")
+        private Long productId;
+
+        @DecimalMin(value = "0.01", message = "价格必须大于0")
+        private BigDecimal price;
+
+        @Min(value = 1, message = "数量至少为1")
+        private Integer quantity;
+    }
+}
+```
+
+**自定义校验注解**：
+
+```java
+// 1. 定义注解
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = PhoneValidator.class)
+public @interface Phone {
+    String message() default "手机号格式不正确";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}
+
+// 2. 实现校验器
+public class PhoneValidator implements ConstraintValidator<Phone, String> {
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        return value != null && PHONE_PATTERN.matcher(value).matches();
+    }
+}
+
+// 3. 使用自定义注解
+@Data
+public class SmsCodeDTO {
+    @Phone(message = "手机号格式不正确")
+    private String phone;
+}
+```
+
+**常用校验注解**：
+- `@NotNull` - 不能为 null
+- `@NotBlank` - 不能为空字符串（去除空格后）
+- `@NotEmpty` - 不能为空（集合、数组、字符串）
+- `@Size(min, max)` - 长度限制
+- `@Min` / `@Max` - 数值范围
+- `@DecimalMin` / `@DecimalMax` - 小数范围
+- `@Email` - 邮箱格式
+- `@Pattern(regexp)` - 正则表达式
+- `@Valid` - 嵌套对象校验
+
+### 4. 方法日志记录
 
 ```java
 @Service
@@ -204,7 +337,7 @@ public class UserService {
 - TraceId
 - 用户ID（如果已登录）
 
-### 4. 分布式锁
+### 5. 分布式锁
 
 ```java
 @Service
@@ -224,7 +357,7 @@ public class OrderService {
 - `block`: 是否阻塞等待
 - `msg`: 获取锁失败时的提示信息
 
-### 5. 接口限流
+### 6. 接口限流
 
 基于 Redisson 令牌桶算法的分布式限流，支持多种限流维度：
 
@@ -290,7 +423,7 @@ public void sendSms(@RequestParam String phone) {
 - `type`: 限流类型（DEFAULT/IP/USER）
 - `msg`: 超限提示信息
 
-### 6. Redis 消息队列
+### 7. Redis 消息队列
 
 **发送消息**：
 
@@ -332,7 +465,7 @@ public class OrderConsumer implements RedisMsgConsumer {
 }
 ```
 
-### 7. 分布式订单号生成
+### 8. 分布式订单号生成
 
 ```java
 @Autowired
@@ -343,7 +476,7 @@ BigInteger orderNo = redisUtil.generateOrderNo("ORDER:SEQ");
 // 示例：20260217142530_00001
 ```
 
-### 8. API 版本控制
+### 9. API 版本控制
 
 ```java
 @RestController
@@ -366,7 +499,7 @@ public class UserController {
 }
 ```
 
-### 9. 国际化
+### 10. 国际化
 
 **定义消息**（`messages_zh_CN.properties`）：
 
@@ -394,7 +527,7 @@ throw new BusinessException("user_not_found");
 - 日语（ja）
 - 韩语（ko）
 
-### 10. 异步任务
+### 11. 异步任务
 
 ```java
 @Service
@@ -419,7 +552,7 @@ public class NotificationService {
 - 支持虚拟线程（Java 21 特性）
 - 异常统一处理和日志记录
 
-### 11. MyBatis-Plus 自动填充
+### 12. MyBatis-Plus 自动填充
 
 继承 `BaseEntity` 即可自动填充字段：
 
@@ -704,7 +837,7 @@ public User info() {
 
 ## 📝 待完成功能
 
-- [ ] 参数校验示例和文档
+- [x] 参数校验示例和文档
 - [x] 限流功能实现
 - [ ] 数据脱敏功能
 - [ ] XSS 防护
