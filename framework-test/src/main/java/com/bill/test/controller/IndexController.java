@@ -3,6 +3,8 @@ package com.bill.test.controller;
 import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import bill.framework.redis.RedisUtil;
+import bill.framework.redis.limit.RateLimit;
+import bill.framework.redis.limit.RateLimitType;
 import bill.framework.redis.lock.RedisLock;
 import bill.framework.redis.lock.RedisLockUtil;
 import bill.framework.thread.ExecutorsMdcVirtual;
@@ -218,6 +220,49 @@ public class IndexController {
         //int f=1/0;
         throw new BizException(SysResponseCode.SYSTEM_ERROR.getCode(),"我的异常",500);
        // return str;
+    }
+
+    // ==================== 限流示例 ====================
+
+    @Operation(summary = "限流示例1 - 全局接口限流（每秒10次）")
+    @GetMapping("/rate/default")
+    @NoToken
+    @RateLimit(value = 10, time = 1, timeUnit = TimeUnit.SECONDS)
+    public String rateDefault() {
+        return "成功！全局接口限流：所有用户共享每秒10次";
+    }
+
+    @Operation(summary = "限流示例2 - 按IP限流（每分钟60次）")
+    @GetMapping("/rate/ip")
+    @NoToken
+    @RateLimit(value = 60, time = 1, timeUnit = TimeUnit.MINUTES, type = RateLimitType.IP)
+    public String rateIp() {
+        return "成功！按IP限流：每个IP每分钟60次";
+    }
+
+    @Operation(summary = "限流示例3 - 按用户限流（每秒5次）")
+    @GetMapping("/rate/user")
+    @RateLimit(value = 5, time = 1, timeUnit = TimeUnit.SECONDS, type = RateLimitType.USER, msg = "操作过于频繁，请稍后再试")
+    public String rateUser() {
+        BigInteger userId = UserUtils.userId();
+        return "成功！按用户限流：用户 " + userId + " 每秒最多5次";
+    }
+
+    @Operation(summary = "限流示例4 - 自定义key（SpEL表达式）")
+    @GetMapping("/rate/custom/{action}")
+    @NoToken
+    @RateLimit(value = 3, time = 60, timeUnit = TimeUnit.SECONDS, key = "'action:' + #action", msg = "该操作每分钟最多3次")
+    public String rateCustom(@PathVariable String action) {
+        return "成功！自定义key限流：" + action + " 每分钟最多3次";
+    }
+
+    @Operation(summary = "限流示例5 - 发送短信（每个手机号每天10次）")
+    @PostMapping("/rate/sms")
+    @NoToken
+    @RateLimit(value = 10, time = 1, timeUnit = TimeUnit.DAYS, key = "'sms:' + #phone", msg = "验证码发送过于频繁，每天最多10次")
+    public String sendSms(@RequestParam String phone) {
+        // 实际发送短信逻辑...
+        return "验证码已发送到 " + phone;
     }
 
 
