@@ -5,4 +5,4 @@
 | |_) | | | |       \ V  V /  __/ |_) |
 |_.__/|_|_|_|        \_/\_/ \___|_.__/
 
-     bill-framework-web(v1.0)
+     bill-framework-web(v1.1)

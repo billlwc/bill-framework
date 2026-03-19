@@ -78,17 +78,17 @@
             <dependency>
                 <groupId>bill.framework</groupId>
                 <artifactId>framework-base</artifactId>
-                <version>${version}</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>bill.framework</groupId>
                 <artifactId>framework-web</artifactId>
-                <version>${version}</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>bill.framework</groupId>
                 <artifactId>framework-redis</artifactId>
-                <version>${version}</version>
+                <version>1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
