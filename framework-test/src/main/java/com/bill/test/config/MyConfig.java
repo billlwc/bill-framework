@@ -3,6 +3,7 @@ package com.bill.test.config;
 import bill.framework.web.config.MvcConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 @Configuration
@@ -10,6 +11,11 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 public class MyConfig extends MvcConfig {
     @Override
     protected void setInterceptors(InterceptorRegistry registry) {
+
+    }
+
+    @Override
+    protected void setCorsMappings(CorsRegistry registry) {
 
     }
 }

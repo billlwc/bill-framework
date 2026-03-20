@@ -19,7 +19,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 
@@ -74,6 +76,16 @@ public abstract class WebConfig extends MvcConfig implements ApplicationRunner {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/doc.html");
+    }
+
+    @Override
+    protected void setCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*") // 允许所有来源，避免局域网和本地代理跨域问题
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 
     @Bean

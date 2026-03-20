@@ -38,14 +38,14 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        log.info("start insert fill ....");
+        //log.info("start insert fill ....");
         this.strictInsertFill(metaObject, "id", snowflake::nextId, Long.class); // 起始版本 3.3.3(推荐)
         this.strictInsertFill(metaObject, "createTime", LocalDateTime::now, LocalDateTime.class); // 起始版本 3.3.3(推荐)
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        log.info("start update fill ....");
+        //log.info("start update fill ....");
         this.strictUpdateFill(metaObject, "updateTime", LocalDateTime::now, LocalDateTime.class); // 起始版本 3.3.3(推荐)
        // this.strictUpdateFill(metaObject, "updateUserId", () -> -1L, Long.class);
     }
