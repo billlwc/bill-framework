@@ -1,10 +1,9 @@
 package bill.framework.web.advice;
 
-
 import bill.framework.message.MessageSourceService;
 import bill.framework.reply.Result;
 import bill.framework.web.annotation.NoResult;
-import cn.hutool.json.JSONUtil;
+import bill.framework.web.util.JSONUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -23,7 +22,6 @@ import java.lang.reflect.AnnotatedElement;
 public class ResultControllerAdvice implements ResponseBodyAdvice<Object> {
 
     private final MessageSourceService messageService;
-
 
 
     @Override
@@ -45,7 +43,7 @@ public class ResultControllerAdvice implements ResponseBodyAdvice<Object> {
         if(data instanceof String str){
             // 这里假设 data 是国际化 key
             String message = messageService.getMessage(str, null);
-            return JSONUtil.toJsonStr(new Result(message));
+            return JSONUtil.toJson(new Result(message));
         }
 
         return new Result(data);

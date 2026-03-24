@@ -5,8 +5,9 @@ import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
 import bill.framework.message.MessageSourceService;
 import bill.framework.reply.Result;
+import bill.framework.web.util.JSONUtil;
 import cn.dev33.satoken.exception.NotLoginException;
-import cn.hutool.json.JSONUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class BaseExceptionHandler {
     public ResponseEntity<Result> handleBusinessException(BusinessException e, HttpServletRequest request) {
         log.warn("【业务异常】path={}, params={}, error={}",
                 request.getRequestURI(),
-                JSONUtil.toJsonStr(request.getParameterMap()),
+                JSONUtil.toJson(request.getParameterMap()),
                 e.getMessage());
 
         String message = getMessage(e.getMessage(), null);
@@ -64,7 +65,7 @@ public class BaseExceptionHandler {
 
         log.error("【参数校验异常】path={}, params={}, error={}",
                 request.getRequestURI(),
-                JSONUtil.toJsonStr(request.getParameterMap()),
+                JSONUtil.toJson(request.getParameterMap()),
                 errorMsg);
 
         return ResponseEntity
@@ -80,7 +81,7 @@ public class BaseExceptionHandler {
     public ResponseEntity<Result> handleNotFoundException(HttpServletRequest request) {
         log.warn("【资源不存在】path={}, params={}",
                 request.getRequestURI(),
-                JSONUtil.toJsonStr(request.getParameterMap()));
+                JSONUtil.toJson(request.getParameterMap()));
 
         return ResponseEntity
                 .status(SysResponseCode.NOT_FOUND.getHttpStatus())
@@ -113,7 +114,7 @@ public class BaseExceptionHandler {
     public ResponseEntity<Result> handleSpringCommonException(Exception e, HttpServletRequest request) {
         log.error("【Spring通用异常】path={}, params={}, error={}",
                 request.getRequestURI(),
-                JSONUtil.toJsonStr(request.getParameterMap()),
+                JSONUtil.toJson(request.getParameterMap()),
                 e.getMessage(),e);
 
         return ResponseEntity
@@ -129,7 +130,7 @@ public class BaseExceptionHandler {
     public ResponseEntity<Result> handleThrowable(Throwable e, HttpServletRequest request) {
         log.error("【系统异常】path={}, params={}",
                 request.getRequestURI(),
-                JSONUtil.toJsonStr(request.getParameterMap()),
+                JSONUtil.toJson(request.getParameterMap()),
                 e);
 
         return ResponseEntity

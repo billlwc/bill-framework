@@ -60,41 +60,36 @@ public class UserUtils {
         return headers;
     }
 
-    /**
-     * 获取客户端真实 IP 地址（考虑多层代理）
-     */
     public static String getClientIp() {
-        HttpServletRequest request=getRequest();
+        HttpServletRequest request = getRequest(); // 假设你这里封装了 RequestContextHolder
         if (request == null) {
-            return "UNKNOWN";
+            return "none";
         }
 
-        // 常见的代理头（按优先级）
-        String[] headerNames = {
-                "X-Forwarded-For",
-                "X-Real-IP",
-                "CF-Connecting-IP",     // Cloudflare
-                "X-Client-IP",
-                "Proxy-Client-IP",
-                "WL-Proxy-Client-IP",
-                "HTTP_CLIENT_IP",
-                "HTTP_X_FORWARDED_FOR"
-        };
-
-        for (String header : headerNames) {
-            String ip = request.getHeader(header);
-            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                // X-Forwarded-For 可能有多个 IP，用第一个
-                if (ip.contains(",")) {
-                    ip = ip.split(",")[0].trim();
-                }
-                return ip;
-            }
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr(); // 如果前面都没拿到，最后取直连 IP
         }
 
-        // 无代理时直接取 remote address
-        return request.getRemoteAddr();
+        // 处理多级代理情况，取第一个真实 IP (使用 substring 性能高于 split)
+        if (ip != null && ip.contains(",")) {
+            ip = ip.substring(0, ip.indexOf(",")).trim();
+        }
+
+        // 防止最终拿到的是 0:0:0:0:0:0:0:1 (IPv6的本机地址)，统一转成 127.0.0.1
+        if ("0:0:0:0:0:0:0:1".equals(ip)) {
+            ip = "127.0.0.1";
+        }
+
+        return ip;
     }
+
 
     /**
      * 获取客户端完整信息（包含 IP、User-Agent、语言等）
@@ -127,16 +122,17 @@ public class UserUtils {
         return info;
     }
 
-    public static void login(BigInteger id,Object vo) {
+    public  static String login(Object id,Object vo) {
         StpUtil.login(id);
         if(vo!=null){
             setSession(vo);
         }
         getResponse().addHeader("Access-Control-Expose-Headers", StpUtil.getTokenName());
         getResponse().addHeader(StpUtil.getTokenName(), StpUtil.getTokenValue());
+        return StpUtil.getTokenValue();
     }
 
-    public static BigInteger userId() {
+    public static Object userId() {
         return (BigInteger) StpUtil.getLoginId();
     }
 
