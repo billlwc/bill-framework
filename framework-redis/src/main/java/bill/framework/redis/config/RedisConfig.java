@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Configuration
-@ComponentScan("bill.framework")
+@ComponentScan("bill.framework.redis")
 @EnableCaching
 @Slf4j
 public class RedisConfig implements ApplicationRunner {

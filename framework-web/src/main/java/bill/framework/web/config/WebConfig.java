@@ -34,7 +34,7 @@ import java.util.Objects;
 @Slf4j
 @Configuration
 @ComponentScan("bill.framework")
-public abstract class WebConfig extends MvcConfig implements ApplicationRunner {
+public class WebConfig extends MvcConfig implements ApplicationRunner {
 
     @Override
     protected void setInterceptors(InterceptorRegistry registry) {

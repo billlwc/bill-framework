@@ -1,5 +1,6 @@
 package bill.framework.web.advice;
 
+import bill.framework.enums.SysResponseCode;
 import bill.framework.message.MessageSourceService;
 import bill.framework.reply.Result;
 import bill.framework.web.annotation.NoResult;
@@ -40,13 +41,15 @@ public class ResultControllerAdvice implements ResponseBodyAdvice<Object> {
             return data;
         }
 
+        String successCode = SysResponseCode.SUCCESS.getCode();
+        String successMsg = messageService.getMessage(SysResponseCode.SUCCESS.getMsg(), null);
+
         if(data instanceof String str){
-            // 这里假设 data 是国际化 key
             String message = messageService.getMessage(str, null);
-            return JSONUtil.toJson(new Result(message));
+            return JSONUtil.toJson(new Result(successCode, successMsg, message));
         }
 
-        return new Result(data);
+        return new Result(successCode, successMsg, data);
 
     }
 }
