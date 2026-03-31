@@ -1,6 +1,6 @@
 package com.bill.test.controller;
 
-import bill.framework.thread.ExecutorsMdcVirtual;
+import bill.framework.web.thread.ExecutorsMdcVirtual;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

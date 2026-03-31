@@ -1,4 +1,4 @@
-package bill.framework.message;
+package bill.framework.web.message;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;

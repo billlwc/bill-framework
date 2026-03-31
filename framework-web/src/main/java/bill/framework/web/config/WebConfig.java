@@ -33,7 +33,7 @@ import java.util.Objects;
 @SuppressWarnings("NullableProblems")
 @Slf4j
 @Configuration
-@ComponentScan("bill.framework")
+@ComponentScan("bill.framework.web")
 public class WebConfig extends MvcConfig implements ApplicationRunner {
 
     @Override

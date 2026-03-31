@@ -1,4 +1,4 @@
-package bill.framework.thread;
+package bill.framework.web.thread;
 
 import org.slf4j.MDC;
 

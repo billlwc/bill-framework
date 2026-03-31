@@ -3,7 +3,7 @@ package bill.framework.web.exception;
 
 import bill.framework.enums.SysResponseCode;
 import bill.framework.exception.BusinessException;
-import bill.framework.message.MessageSourceService;
+import bill.framework.web.message.MessageSourceService;
 import bill.framework.reply.Result;
 import bill.framework.web.util.JSONUtil;
 import cn.dev33.satoken.exception.NotLoginException;
