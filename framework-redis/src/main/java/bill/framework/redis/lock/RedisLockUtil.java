@@ -51,15 +51,15 @@ public class RedisLockUtil {
      * 尝试加锁，带自定义超时时间
      *
      * @param key 锁名
-     * @param black 是否阻塞
+     * @param block 是否阻塞
      * @param timeout 超时时间
      * @param timeUnit 时间单位
      * @param msg 加锁失败异常信息
      */
     @SneakyThrows
-    public RLock tryLock(String key,boolean black, long timeout, TimeUnit timeUnit, String ... msg) {
+    public RLock tryLock(String key, boolean block, long timeout, TimeUnit timeUnit, String ... msg) {
         RLock rLock = getLock(key);
-        if (!rLock.tryLock(black?timeout:0, timeout, timeUnit)) {
+        if (!rLock.tryLock(block ? timeout : 0, timeout, timeUnit)) {
             String message=SysResponseCode.SYSTEM_BUSY.getMsg();
             if(msg.length>0&& StrUtil.isNotBlank(msg[0])){
                 message=msg[0];

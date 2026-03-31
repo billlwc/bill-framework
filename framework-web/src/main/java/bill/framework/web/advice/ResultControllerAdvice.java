@@ -18,7 +18,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.lang.reflect.AnnotatedElement;
 
 @SuppressWarnings("NullableProblems")
-@RestControllerAdvice(basePackages = "com")
+//@RestControllerAdvice(basePackages = "com")
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class ResultControllerAdvice implements ResponseBodyAdvice<Object> {
 

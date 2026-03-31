@@ -145,7 +145,7 @@ public class RedisUtil {
      * @param delta 减少的值（必须大于 0）
      * @return 减少后的值
      */
-    public Long burst(String key, long delta) {
+    public Long decr(String key, long delta) {
         if (delta < 0) {
             throw new RuntimeException("递减因子必须大于0");
         }
